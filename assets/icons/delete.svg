@@ -1,0 +1,14 @@
+<svg id="Group_44087" data-name="Group 44087" xmlns="http://www.w3.org/2000/svg" width="17.17" height="17.17" viewBox="0 0 17.17 17.17">
+  <g id="Group_42755" data-name="Group 42755" transform="translate(0 0)">
+    <g id="Group_42751" data-name="Group 42751" opacity="0.1">
+      <path id="rectangle" d="M8.585,0A8.585,8.585,0,1,1,0,8.585,8.585,8.585,0,0,1,8.585,0Z" fill="#ed7b62"/>
+    </g>
+    <g id="waste-can" transform="translate(4.683 3.902)">
+      <g id="Group_7" data-name="Group 7" transform="translate(0)">
+        <path id="Path_11" data-name="Path 11" d="M21.407,2.639h.6V8.476a.3.3,0,0,0,.3.3h5.488a.3.3,0,0,0,.3-.3V2.639h.748a.3.3,0,0,0,0-.6H27.414A2.13,2.13,0,0,0,26.87.663,2.365,2.365,0,0,0,25.069,0a2.167,2.167,0,0,0-1.746.668A1.983,1.983,0,0,0,22.9,2.04h-1.5a.3.3,0,1,0,0,.6Zm2.365-1.586A1.605,1.605,0,0,1,25.064.6a1.809,1.809,0,0,1,1.362.469,1.551,1.551,0,0,1,.384.973H23.5A1.414,1.414,0,0,1,23.772,1.053Zm3.722,1.586V8.176H22.6V2.639Z" transform="translate(-21.108 0)" fill="#ed7b62"/>
+        <path id="Path_12" data-name="Path 12" d="M174.407,190.758a.3.3,0,0,0,.3-.3v-3.442a.3.3,0,0,0-.6,0v3.442A.3.3,0,0,0,174.407,190.758Z" transform="translate(-171.414 -183.429)" fill="#ed7b62"/>
+        <path id="Path_13" data-name="Path 13" d="M282.074,190.758a.3.3,0,0,0,.3-.3v-3.442a.3.3,0,0,0-.6,0v3.442A.3.3,0,0,0,282.074,190.758Z" transform="translate(-277.185 -183.429)" fill="#ed7b62"/>
+      </g>
+    </g>
+  </g>
+</svg>

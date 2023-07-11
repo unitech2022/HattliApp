@@ -1,0 +1,8 @@
+<svg id="us" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="flag">
+    <path id="Vector" d="M0,18.5V0" transform="translate(5.15 2.75)" fill="#7e7e7e"/>
+    <path id="Vector-2" data-name="Vector" d="M0,19.25V.75A.755.755,0,0,1,.75,0,.755.755,0,0,1,1.5.75v18.5A.755.755,0,0,1,.75,20,.755.755,0,0,1,0,19.25Z" transform="translate(4.4 2)" fill="#7e7e7e"/>
+    <path id="Vector-3" data-name="Vector" d="M12.03,7.5a1.39,1.39,0,0,1-.47-1.03,1.65,1.65,0,0,1,.49-1.23l1.2-1.2C14.29,3,14.68,2,14.35,1.21S13.04,0,11.58,0H.38A.4.4,0,0,0,0,.39v12a.38.38,0,0,0,.38.38h11.2c1.44,0,2.41-.44,2.74-1.23s-.05-1.79-1.07-2.82Z" transform="translate(4.77 3.61)" fill="#7e7e7e" opacity="0.4"/>
+    <path id="Vector-4" data-name="Vector" d="M24,0V24H0V0Z" fill="#7e7e7e" opacity="0"/>
+  </g>
+</svg>

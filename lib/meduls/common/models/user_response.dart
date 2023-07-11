@@ -2,22 +2,22 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
+
 UserResponse userResponseFromJson(String str) =>
     UserResponse.fromJson(json.decode(str));
 
 String userResponseToJson(UserResponse data) => json.encode(data.toJson());
 
+// ignore: must_be_immutable
 class UserResponse extends Equatable {
   String? token;
   UserModel? user;
-  DateTime? expiration;
   bool? status;
   // Address? address;
 
   UserResponse({
     required this.token,
     required this.user,
-    required this.expiration,
     required this.status,
     // required this.address,
   });
@@ -25,7 +25,7 @@ class UserResponse extends Equatable {
   factory UserResponse.fromJson(Map<String, dynamic> json) => UserResponse(
         token: json["token"],
         user: UserModel.fromJson(json["user"]),
-        expiration: DateTime.parse(json["expiration"]),
+        // expiration: DateTime.parse(json["expiration"]),
         status: json["status"],
         // address: Address.fromJson(json["address"]),
       );
@@ -33,13 +33,13 @@ class UserResponse extends Equatable {
   Map<String, dynamic> toJson() => {
         "token": token,
         "user": user!.toJson(),
-        "expiration": expiration.toString(),
+        // "expiration": expiration.toString(),
         "status": status,
         // "address": address!.toJson(),
       };
 
   @override
-  List<Object?> get props => [token, user, expiration, status];
+  List<Object?> get props => [token, user, status];
 }
 
 class Address extends Equatable {
@@ -91,22 +91,20 @@ class Address extends Equatable {
 }
 
 class UserModel extends Equatable {
-   final String id;
-     final String userName;
-     final String email;
+  final String id;
+  final String userName;
+  final String email;
   final String role;
   final String fullName;
-  final String nameAdministratorCompany;
+
   final String deviceToken;
   final int status;
   final String about;
   final String code;
   final String profileImage;
-  final String logoCompany;
-  final String imagePassport;
-  String typeService;
+
   final String city;
-  double points;
+ final double points;
   final String address;
   final double lat;
   final double lng;
@@ -115,21 +113,16 @@ class UserModel extends Equatable {
   final String createdAt;
 
   UserModel(
-      {
-        required this.id,
-         required this.userName,
-          required this.email,
-        required this.role,
+      {required this.id,
+      required this.userName,
+      required this.email,
+      required this.role,
       required this.fullName,
-      required this.nameAdministratorCompany,
       required this.deviceToken,
       required this.status,
       required this.about,
       required this.code,
       required this.profileImage,
-      required this.logoCompany,
-      required this.imagePassport,
-      required this.typeService,
       required this.city,
       required this.points,
       required this.address,
@@ -140,43 +133,37 @@ class UserModel extends Equatable {
       required this.createdAt});
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-       id : json['id'],
-          userName : json['userName'],
-     role : json['role'],
-       email : json['email'],
-    fullName : json['fullName'],
-    nameAdministratorCompany : json['nameAdministratorCompany']??"",
-    deviceToken : json['deviceToken'],
-    status : json['status'],
-    about : json['about']??"",
-    code : json['code'],
-    profileImage : json['profileImage']??"",
-    logoCompany : json['logoCompany']??"",
-    imagePassport : json['imagePassport']??"",
-    typeService : json['typeService']??"",
-    city : json['city'],
-    points : json['points'],
-    address : json['address'],
-    lat : json['lat'],
-    lng : json['lng'],
-    rate : json['rate'],
-    surveysBalance : json['surveysBalance'],
-    createdAt : json['createdAt'],
-  );
+        id: json['id'],
+        userName: json['userName'],
+        role: json['role'],
+        email: json['email'] ?? "غير مسجل",
+        fullName: json['fullName'] ?? "غير مسجل",
+        deviceToken: json['deviceToken']??"",
+        status: json['status'],
+        about: json['about'] ?? "",
+        code: json['code'],
+        profileImage: json['profileImage'] ?? "",
+        city: json['city'] ??"غير مسجلة",
+        points: json['points'].toDouble(),
+        address: json['address'] ?? "",
+        lat: json['lat'].toDouble(),
+        lng: json['lng'].toDouble(),
+        rate: json['rate'].toDouble(),
+        surveysBalance: json['surveysBalance'].toDouble(),
+        createdAt: json['createdAt'],
+      );
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['role'] = role;
     data['fullName'] = fullName;
-    data['nameAdministratorCompany'] = nameAdministratorCompany;
+
     data['deviceToken'] = deviceToken;
     data['status'] = status;
     data['about'] = about;
     data['code'] = code;
     data['profileImage'] = profileImage;
-    data['logoCompany'] = logoCompany;
-    data['imagePassport'] = imagePassport;
-    data['typeService'] = typeService;
+
     data['city'] = city;
     data['points'] = points;
     data['address'] = address;
@@ -189,28 +176,23 @@ class UserModel extends Equatable {
   }
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         id,
         fullName,
-       userName,
-       email,
+        userName,
+        email,
         profileImage,
         role,
         deviceToken,
         status,
         code,
-       
         city,
-       rate,
-       lat,
-       lng,
-       imagePassport,
-       logoCompany,
-       typeService,
-       address,
-       about,
-       profileImage,
+        rate,
+        lat,
+        lng,
+        address,
+        about,
+        profileImage,
         points,
         surveysBalance,
         createdAt

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
+  <g id="vuesax_twotone_document-upload" data-name="vuesax/twotone/document-upload" transform="translate(0.5 0.5)">
+    <g id="vuesax_twotone_document-upload-2" data-name="vuesax/twotone/document-upload">
+      <g id="document-upload">
+        <g id="Group_631" data-name="Group 631" transform="translate(7 11)" opacity="0.4">
+          <path id="Vector" d="M2,6V0L0,2" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke-dasharray="0 0"/>
+          <path id="Vector-2" data-name="Vector" d="M0,0,2,2" transform="translate(2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke-dasharray="0 0"/>
+        </g>
+        <path id="Vector-3" data-name="Vector" d="M20,8v5c0,5-2,7-7,7H7c-5,0-7-2-7-7V7C0,2,2,0,7,0h5" transform="translate(2 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke-dasharray="0 0"/>
+        <path id="Vector-4" data-name="Vector" d="M4,8C1,8,0,7,0,4V0L8,8Z" transform="translate(14 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke-dasharray="0 0"/>
+        <path id="Vector-5" data-name="Vector" d="M24,0V24H0V0Z" fill="none" stroke="#000" stroke-width="1" opacity="0"/>
+      </g>
+    </g>
+  </g>
+</svg>

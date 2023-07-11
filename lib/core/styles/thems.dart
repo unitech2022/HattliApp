@@ -8,7 +8,7 @@ ThemeData lightTheme(BuildContext context) {
   // final currentLang = prefs.getString(AppConstants.langugageCode);
   return ThemeData(
     // useMaterial3: true,
-    scaffoldBackgroundColor: Palette.white,
+    scaffoldBackgroundColor:const Color(0xffFEFEFE),
     // primaryColor: Palette.restaurantColor,
     splashFactory: InkRipple.splashFactory,
     fontFamily: AppFonts.taM,

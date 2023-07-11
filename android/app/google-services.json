@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "208993845753",
+    "project_id": "hatliapp",
+    "storage_bucket": "hatliapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208993845753:android:cb4bb4ef67c1fff683fd28",
+        "android_client_info": {
+          "package_name": "com.hatlliapp.hatlli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208993845753-vpfdqssuo091v9h36r1va5kbv1ii4cqa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hatlliapp.hatlli",
+            "certificate_hash": "c13f292efb17395c2882491419bc764f16ec7fb3"
+          }
+        },
+        {
+          "client_id": "208993845753-t4qm2k201hoojhrrbhl55enhiipn3eao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3xhGIpZmVrtq4QFq4QRKn5zKq4Ia1dt4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208993845753-t4qm2k201hoojhrrbhl55enhiipn3eao.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,7 +7,12 @@ class Strings {
  static const String next = "التالي";
    static const String vistor = "الدخول كـ/ضيف";
 static const String sendCode = "سيتم ارسال كود تحقق لتأكيد رقم الجوال";
- 
+ static const String theLogin ="الدخول";
+
+ static const String verCode ="التحقق من الجوال";
+static const String verCodeDesc =" الرجاء ادخال كود التحقق الذي تم استلامة";
+
+
   static const String descPlatform =
       "تجربتك المميزة للتنقل بين المناطق او المدن او العودة من المدرسة";
   static const String lang = "اللغة";
@@ -23,7 +28,7 @@ static const String sendCode = "سيتم ارسال كود تحقق لتأكيد
   static const String hintEmail = "البريد الالكتروني";
   static const String hintPass = "كلمة المرور";
   static const String codeNumber = "+966";
-  static const String reSend =  "لم يصلني كود ؟ برجاء ارسال كو اخر";
+  static const String reSend =  "إعادة ارسال الكود";
   static const String login = "تسجيل الدخول";
   static const String forgetPass = "نسيت كلمة المرور ؟";
   static const String forgetUserName = "نسيت اسم المستخدم";
@@ -66,7 +71,7 @@ static const String sendCode = "سيتم ارسال كود تحقق لتأكيد
   static const String completed = "تم";
   static const String name = "الاسم";
   static const String email = "البريد الالكتروني";
-  static const String number = "رقم الجوال";
+  static const String number = "رقم الهاتف";
   static const String birthday = "تاريخ الميلاد";
   static const String gender = "النوع";
   static const String defultAddress = "العنوان الافتراضي";

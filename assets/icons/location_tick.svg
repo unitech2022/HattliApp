@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23">
+  <g id="location-tick" transform="translate(0.5 0.5)">
+    <g id="location-tick-2" data-name="location-tick">
+      <g id="location-tick-3" data-name="location-tick">
+        <path id="Vector" d="M15.586,5.958C16.64,10.615,13.743,14.557,11.2,17A4.761,4.761,0,0,1,4.6,17C2.065,14.557-.832,10.606.223,5.949,2.028-1.989,13.789-1.98,15.586,5.958Z" transform="translate(3.096 1.833)" fill="none" stroke="#ffa827" stroke-width="1.5" stroke-dasharray="0 0"/>
+        <path id="Vector-2" data-name="Vector" d="M0,2.292,1.375,3.667,5.042,0" transform="translate(8.479 8.25)" fill="none" stroke="#ffa827" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke-dasharray="0 0" opacity="0.4"/>
+        <path id="Vector-3" data-name="Vector" d="M22,0V22H0V0Z" transform="translate(22 22) rotate(180)" fill="none" stroke="#ffa827" stroke-width="1" opacity="0"/>
+      </g>
+    </g>
+  </g>
+</svg>

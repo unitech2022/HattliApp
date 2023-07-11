@@ -6,4 +6,8 @@ class AppFonts {
   static const moR = "moR";
   static const taB = "taB";
   static const taM = "taM";
+
+    static const caR = "CaR";
+  static const caSi = "caSi";
+  static const caB = "caB";
 }

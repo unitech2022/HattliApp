@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="83.688" height="83.688" viewBox="0 0 83.688 83.688">
+  <g id="successd" transform="translate(-116.5 -147.488)">
+    <g id="checked" transform="translate(116.5 147.488)">
+      <circle id="Ellipse_1904" data-name="Ellipse 1904" cx="41.844" cy="41.844" r="41.844" transform="translate(0 0)" fill="#ffa827"/>
+      <path id="Path_80250" data-name="Path 80250" d="M188.8,188.149l21.823,21.823A42.414,42.414,0,0,0,242.087,169v-1.2L224.949,152Z" transform="translate(-158.399 -127.757)" fill="#f0a434"/>
+      <g id="Group_43265" data-name="Group 43265" transform="translate(13.661 20.351)">
+        <path id="Path_80251" data-name="Path 80251" d="M114.454,218.143a5.013,5.013,0,0,1,0,6.962l-3.883,3.883a5.013,5.013,0,0,1-6.962,0l-17-17.137a5.013,5.013,0,0,1,0-6.962l3.883-3.883a5.013,5.013,0,0,1,6.962,0Z" transform="translate(-85.2 -187.149)" fill="#fff"/>
+        <path id="Path_80252" data-name="Path 80252" d="M195.261,126.606a5.013,5.013,0,0,1,6.962,0l3.883,3.883a5.013,5.013,0,0,1,0,6.962l-29.455,29.321a5.013,5.013,0,0,1-6.962,0l-3.883-3.883a5.013,5.013,0,0,1,0-6.962Z" transform="translate(-151.145 -125.2)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>

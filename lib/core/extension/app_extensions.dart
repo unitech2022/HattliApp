@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 
 
-final mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+// final mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
 
 // extension APIImage on BuildContext {
 //   String getImageURL(String? image) {

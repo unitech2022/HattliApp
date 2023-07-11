@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="11.372" height="7.071" viewBox="0 0 11.372 7.071">
+  <g id="drop" transform="translate(0 7.071) rotate(-90)">
+    <rect id="line" width="8" height="2" rx="1" transform="translate(5.657 11.372) rotate(-135)"/>
+    <rect id="line-2" data-name="line" width="8" height="2" rx="1" transform="translate(0 5.657) rotate(-45)"/>
+  </g>
+</svg>

@@ -4,7 +4,7 @@ class AppAssets {
     static const logoBlack = 'assets/images/logo_black.png';
   static const imageUser = 'assets/images/user.png';
   static const imageProvider = 'assets/images/man.png';
-  static const guide2 = 'assets/images/onboarding/guide2.svg';
+  static const callIcon = 'assets/icons/call.svg';
   static const guide3 = 'assets/images/onboarding/guide3.svg';
   static const guide4 = 'assets/images/onboarding/guide4.svg';
 

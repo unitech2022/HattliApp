@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="14.473" viewBox="0 0 12 14.473">
+  <g id="Filter_Icon" data-name="Filter Icon" transform="translate(-0.432)">
+    <g id="Group_2" data-name="Group 2" transform="translate(8.04)">
+      <path id="Path_2" data-name="Path 2" d="M1,0V14.473" transform="translate(1.412)" fill="none" stroke="#344d5b" stroke-miterlimit="10" stroke-width="1"/>
+      <ellipse id="Oval_4" data-name="Oval 4" cx="2" cy="2.5" rx="2" ry="2.5" transform="translate(0.392 3.236)" fill="#ffa827"/>
+    </g>
+    <g id="Group_2-2" data-name="Group 2">
+      <path id="Path_2-2" data-name="Path 2" d="M0,14.473V0" transform="translate(2.412)" fill="none" stroke="#344d5b" stroke-miterlimit="10" stroke-width="1"/>
+      <ellipse id="Oval_4-2" data-name="Oval 4" cx="2" cy="2.5" rx="2" ry="2.5" transform="translate(0.432 6.236)" fill="#ffa827"/>
+    </g>
+  </g>
+</svg>

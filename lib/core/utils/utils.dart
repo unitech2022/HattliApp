@@ -54,27 +54,25 @@ showErrorLoading(BuildContext context, String error) async {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(AppSize.s14),
+            padding: const EdgeInsets.all(AppSize.s30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  child: Container(
-                    // width: AppSize.s90,
-                    constraints: const BoxConstraints(
-                      minHeight: AppSize.s100,
+                Container(
+                  // width: AppSize.s90,
+                  // constraints: const BoxConstraints(
+                  //   minHeight: AppSize.s100,
+                  // ),
+                  decoration: const BoxDecoration(
+                    color: Palette.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(AppSize.s10),
                     ),
-                    decoration: const BoxDecoration(
-                      color: Palette.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(AppSize.s10),
-                      ),
-                    ),
-                    child: Text(
-                      error,
-                      style: context.titleL,
-                    ),
+                  ),
+                  child: Text(
+                    error,
+                    style: context.titleL,
                   ),
                 ),
                 const SizedBox(height: AppSize.s10),
