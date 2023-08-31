@@ -16,14 +16,20 @@ class ProviderState extends Equatable {
   //** providers by catId */
   final RequestState? getProvidersByCatIdState;
   final List<Provider> providers;
+  final ProductsResponsePagination? productsResponse;
 
+   final RequestState? getProvidersByProviderIdState;
   //** update provider */
   final RequestState? updateProviderState;
-
+// ** area 
+  final double? area;
+ 
 
   const ProviderState({
     this.imageLogoState,
     this.imageLogo,
+    this.area,
+    this.getProvidersByProviderIdState,
     this.updateProviderState,
     this.indexDetailsProvider = 0,
     this.createProviderState,
@@ -34,8 +40,9 @@ class ProviderState extends Equatable {
     this.getDetailsProviderState,
     this.detailsProviderResponse,
     this.getProvidersByCatIdState,
+     this.productsResponse,
     this.providers = const [],
-    
+
   });
 
   ProviderState copyWith(
@@ -50,11 +57,17 @@ class ProviderState extends Equatable {
           final RequestState? getDetailsProviderState,
           final DetailsProviderResponse? detailsProviderResponse,
           final RequestState? getProvidersByCatIdState,
-          final List<Provider>? providers
-          
-          , final RequestState? updateProviderState
+          final List<Provider>? providers,
+          final RequestState? updateProviderState,
+            final double? area,
+           final ProductsResponsePagination? productsResponse,
+
+   final RequestState? getProvidersByProviderIdState
+   
           }) =>
       ProviderState(
+         getProvidersByProviderIdState: getProvidersByProviderIdState ?? this.getProvidersByProviderIdState,
+           area: area ?? this.area,
         indexDetailsProvider: indexDetailsProvider ?? this.indexDetailsProvider,
         categoryModel: categoryModel ?? this.categoryModel,
         createProviderState: createProviderState ?? this.createProviderState,
@@ -70,11 +83,13 @@ class ProviderState extends Equatable {
         getProvidersByCatIdState:
             getProvidersByCatIdState ?? this.getProvidersByCatIdState,
         providers: providers ?? this.providers,
-         updateProviderState: updateProviderState ?? this.updateProviderState,
+        updateProviderState: updateProviderState ?? this.updateProviderState,
+   productsResponse: productsResponse ?? this.productsResponse,
       );
 
   @override
   List<Object?> get props => [
+    getProvidersByProviderIdState,
         createProviderState,
         categoryModel,
         imageLogo,
@@ -88,6 +103,8 @@ class ProviderState extends Equatable {
         getDetailsProviderState,
         getProvidersByCatIdState,
         providers,
-        updateProviderState
+        updateProviderState,
+        area
+     , productsResponse,
       ];
 }

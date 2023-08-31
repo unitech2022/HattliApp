@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../../../core/layout/app_fonts.dart';
@@ -24,8 +25,8 @@ class ContainerTotalWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Texts(
-              title: "المنتجات : ",
+             Texts(
+              title: "المنتجات".tr() + " : ",
               family: AppFonts.caR,
               size: 13,
               textColor: Color(0xff2D2E49),
@@ -41,8 +42,8 @@ class ContainerTotalWidget extends StatelessWidget {
          Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-         const   Texts(
-              title: "اجمالي  : ",
+            Texts(
+              title: "اجمالي".tr() +" : ",
               family: AppFonts.caB,
               size: 15,
               textColor: Color(0xff2D2E49),

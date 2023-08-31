@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hatlli/core/extension/theme_extension.dart';
@@ -30,8 +31,8 @@ class ListProductsWidget extends StatelessWidget {
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 240,
-                childAspectRatio: 2.3 / 4,
+                maxCrossAxisExtent: 245,
+                childAspectRatio: 2.4 / 4,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5),
             itemCount: products.length,
@@ -98,10 +99,10 @@ class ItemProductProvider extends StatelessWidget {
                 children: [
                   Texts(
                       title: product.name,
-                      family: AppFonts.caR,
-                      size: 12,
-                      textColor: const Color(0xff707070),
-                      widget: FontWeight.normal),
+                      family: AppFonts.caB,
+                      size: 14,
+                      textColor:  Colors.black,
+                      widget: FontWeight.bold),
                   Texts(
                       line: 2,
                       title: product.description,
@@ -113,18 +114,33 @@ class ItemProductProvider extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Texts(
-                          title: "السعر  : ",
+                       Texts(
+                          title: "السعر  : ".tr(),
                           family: AppFonts.caR,
                           size: 12,
                           textColor: Color(0xff707070),
                           widget: FontWeight.normal),
-                      Texts(
-                          title: "${product.price.toString()}  SAR",
-                          family: AppFonts.caM,
-                          size: 14,
-                          textColor: Colors.black,
-                          widget: FontWeight.normal),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+
+                          Texts(
+                              title: "${product.price.toString()}  SAR",
+                              family: AppFonts.caM,
+                              size: 14,
+                              textColor: Colors.black,
+                              widget: FontWeight.normal),
+                          product.discount>0?   Text(
+                             "${(product.discount + product.price).toString()}  SAR",
+                              style: TextStyle(
+                                fontFamily: AppFonts.caR,
+                                color: Colors.black54,
+                                height: 1.2,
+                                fontSize: 12,
+                                decoration: TextDecoration.lineThrough,
+                              ),):SizedBox(),
+                        ],
+                      ),
                     ],
                   ),
                   const SizedBox(
@@ -159,7 +175,7 @@ class ItemProductProvider extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          "تعديل المنتج",
+                          "تعديل المنتج".tr(),
                           
                           style: context.titleM.copyWith(
                             height: .8,

@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,29 +10,31 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hatlli/core/animations/slide_transtion.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
+import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/utils/utils.dart';
+import 'package:hatlli/meduls/common/models/category.dart';
 import 'package:hatlli/meduls/common/models/order.dart';
 import 'package:hatlli/meduls/common/ui/map_screen/map_screen.dart';
 import 'package:hatlli/meduls/provider/models/home_provider_response.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-
 import '../../../../core/enums/loading_status.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/app_radius.dart';
 import '../../../../core/layout/app_sizes.dart';
 import '../../../../core/layout/palette.dart';
-
 import '../../../../core/utils/api_constatns.dart';
 import '../../../../core/utils/app_model.dart';
 import '../../../../core/widgets/rating_bar_widget.dart';
 import '../../../../core/widgets/texts.dart';
+import '../../../provider/bloc/provider_cubit/provider_cubit.dart';
 import '../../../user/models/home_user_response.dart';
 import '../../../user/ui/details_provider_screen/details_provider_screen.dart';
 import '../../models/provider.dart';
 import 'dart:ui' as ui;
-
 import '../../models/user_response.dart';
 
 part 'home_state.dart';
@@ -44,6 +47,30 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(currentNavIndex: newIndex));
   }
 
+  filleterProviders(int id, List<Provider> providers, int categoryId) {
+    List<Provider> newProviders = [];
+    if (id == 0) {
+      newProviders = providers;
+      emit(state.copyWith(providers: newProviders));
+    } else if (id == 1) {
+      newProviders = providers
+          .where((element) => element.categoryId == categoryId)
+          .toList();
+      emit(state.copyWith(providers: newProviders));
+    }
+    // *** rate
+    else if (id == 2) {
+      newProviders = providers..sort((a, b) => a.rate.compareTo(b.rate));
+      emit(state.copyWith(providers: newProviders.reversed.toList()));
+    }
+    // *** distance
+    else if (id == 3) {
+      newProviders = providers
+        ..sort((a, b) => a.distance.compareTo(b.distance));
+      emit(state.copyWith(providers: newProviders));
+    }
+  }
+
   changeCurrentIndexTap(int newIndex) {
     emit(state.copyWith(currentIndexTap: newIndex));
   }
@@ -51,73 +78,114 @@ class HomeCubit extends Cubit<HomeState> {
   changeCurrentIndexDrawer(String newIndex) {
     emit(state.copyWith(indexHomeSide: newIndex));
   }
+// **  user functions
 
-  // **  user functions
 // ** get home User
-  Future getHomeUser({context}) async {
-    emit(state.copyWith(getHomeUserState: RequestState.loading));
-    var request = http.Request(
-        'GET',
-        Uri.parse(
-            '${ApiConstants.baseUrl}/home/get-home-data?UserId=${currentUser.id}'));
+  Future getHomeUser({context, isStat = true}) async {
+    bool hasInternetResult = await hasInternet();
+    if (isStat) emit(state.copyWith(getHomeUserState: RequestState.loading));
+    if (hasInternetResult) {
+      var request = http.Request(
+          'GET',
+          Uri.parse(
+              '${ApiConstants.baseUrl}/home/get-home-data?UserId=${currentUser.id}'));
 
-    http.StreamedResponse response = await request.send();
+      http.StreamedResponse response = await request.send();
 
-    if (kDebugMode) {
-      print("${response.statusCode}=======> getHomeUser");
-    }
-    if (response.statusCode == 200) {
-      String jsonDataString = await response.stream.bytesToString();
-      final jsonData = jsonDecode(jsonDataString);
-
-      HomeUserResponse homeUserResponse = HomeUserResponse.fromJson(jsonData);
-      categories = homeUserResponse.categories!;
-      // currentProvider = homeUserResponse!.user;
-      // categories = homeResponseProvider.categories!;
-      addMarker(homeUserResponse.providers!, context);
-      if (homeUserResponse.address == null) {
-        pushPage(
-            context,
-            const MapScreen(
-              type: 1,
-            ));
+      if (kDebugMode) {
+        print("${response.statusCode}=======> getHomeUser");
       }
+      if (response.statusCode == 200) {
+        String jsonDataString = await response.stream.bytesToString();
+        final jsonData = jsonDecode(jsonDataString);
 
-      emit(state.copyWith(
-          getHomeUserState: RequestState.loaded,
-          userModel: homeUserResponse.user,
-          homeUserResponse: homeUserResponse,
-          orders: homeUserResponse.orders!
-              .where((element) => element.order.status == 0)
-              .toList()));
-      updateDeviceToken(userId: currentUser.id, token: AppModel.deviceToken);
+        HomeUserResponse homeUserResponse = HomeUserResponse.fromJson(jsonData);
+        categories = homeUserResponse.categories!;
+        // currentProvider = homeUserResponse!.user;
+        // categories = homeResponseProvider.categories!;
+
+        if (homeUserResponse.address == null && isLogin()) {
+          pushPage(
+              context,
+              MapScreen(
+                type: 1,
+              ));
+        } else {
+          addMarker(homeUserResponse.providers!, context,
+              lat: homeUserResponse.address != null
+                  ? homeUserResponse.address!.lat
+                  : locData.latitude,
+              lng: homeUserResponse.address != null
+                  ? homeUserResponse.address!.lng
+                  : locData.longitude);
+        }
+
+        emit(state.copyWith(
+            getHomeUserState: RequestState.loaded,
+            userModel: homeUserResponse.user,
+            homeUserResponse: homeUserResponse,
+            providers: homeUserResponse.providers,
+            orders: homeUserResponse.orders!
+                .where((element) => element.order.status == 0)
+                .toList()));
+        if (isLogin())
+          updateDeviceToken(
+              userId: currentUser.id, token: AppModel.deviceToken);
+      } else {
+        emit(state.copyWith(getHomeUserState: RequestState.error));
+      }
     } else {
-      emit(state.copyWith(getHomeUserState: RequestState.error));
+      emit(state.copyWith(getHomeUserState: RequestState.noInternet));
     }
   }
 
 // ** add marker
-  Future addMarker(List<Provider> providers, context) async {
+  Future addMarker(List<Provider> providers, context, {lat, lng}) async {
     final Uint8List markerIcon =
-        await getBytesFromAsset('assets/images/marker.png', 80);
+        await getBytesFromAsset('assets/images/marker.png', 120);
+
+    final Uint8List markerIconMyLocation =
+        await getBytesFromAsset('assets/images/mylocation.png', 120);
 
     List<Marker> list = [];
     for (Provider provider in providers) {
       Marker marker = Marker(
         onTap: () {
-          onTapMarker(context, provider);
+          pushTranslationPage(
+              context: context,
+              transtion: FadTransition(
+                  page: DetailsProviderScreen(providerId: provider.id)));
+          // onTapMarker(context, provider);
         },
         markerId: MarkerId(provider.id.toString()),
         position: LatLng(provider.lat, provider.lng),
         icon: BitmapDescriptor.fromBytes(markerIcon),
-        // icon: BitmapDescriptor.,
-        // infoWindow: const InfoWindow(
-        //   title: 'title',
-        //   snippet: 'address',
-        // ),
       );
       list.add(marker);
     }
+
+    //  my location s
+    Marker marker = Marker(
+      onTap: () {
+        // pushPage(context, );
+        // pushTranslationPage(
+        //                         context: context,
+        //                         transtion:
+        //                            DetailsProviderScreen(providerId: provider.id));
+
+        // onTapMarker(context, provider);
+      },
+      markerId: MarkerId("my"),
+      position: LatLng(lat, lng),
+      icon: BitmapDescriptor.fromBytes(markerIconMyLocation),
+      // icon: BitmapDescriptor.,
+      // infoWindow: const InfoWindow(
+      //   title: 'title',
+      //   snippet: 'address',
+      // ),
+    );
+    list.add(marker);
+
     emit(state.copyWith(markers: list));
   }
 
@@ -281,6 +349,14 @@ class HomeCubit extends Cubit<HomeState> {
         .asUint8List();
   }
 
+//** sort providers */
+  CategoryModel sortModel = sortRateList[0];
+  changeSortModel(CategoryModel newValue) {
+    sortModel = newValue;
+    emit(state.copyWith(modelSort: newValue));
+  }
+
+//**
   flitterListOrders(List<OrderResponse> orders) {
     emit(state.copyWith(orders: orders));
   }
@@ -289,45 +365,51 @@ class HomeCubit extends Cubit<HomeState> {
   //** provider functions */ ==============================================================
 
   // ** get home provider
-  Future getHomeProvider({context}) async {
-    emit(state.copyWith(getHomeProviderState: RequestState.loading));
-    var request = http.Request(
-        'GET',
-        Uri.parse(
-            '${ApiConstants.baseUrl}/home/get-home-provider?UserId=${currentUser.id}'));
+  Future getHomeProvider({context, isState = true,isFirst=false}) async {
 
-    http.StreamedResponse response = await request.send();
+    bool hasInternetResult = await hasInternet();
+    if (isState)
+      emit(state.copyWith(getHomeProviderState: RequestState.loading));
+    if (hasInternetResult) {
+      var request = http.Request(
+          'GET',
+          Uri.parse(
+              '${ApiConstants.baseUrl}/home/get-home-provider?UserId=${currentUser.id}'));
 
-    if (kDebugMode) {
-      print("${response.statusCode}=======> getHomeProvider");
-    }
-    if (response.statusCode == 200) {
-      String jsonDataString = await response.stream.bytesToString();
-      final jsonData = jsonDecode(jsonDataString);
+      http.StreamedResponse response = await request.send();
 
-      HomeResponseProvider homeResponseProvider =
-          HomeResponseProvider.fromJson(jsonData);
-
-      currentProvider = homeResponseProvider.provider;
-      categories = homeResponseProvider.categories!;
-      if (homeResponseProvider.address == null) {
-        pushPage(
-            context,
-            const MapScreen(
-              type: 2,
-            ));
+      if (kDebugMode) {
+        print("${response.statusCode}=======> getHomeProvider");
       }
-      emit(state.copyWith(
-          getHomeProviderState: RequestState.loaded,
-          homeResponseProvider: homeResponseProvider,
-          orders: homeResponseProvider.orders!
-              .where((element) => element.order.status == 0)
-              .toList()));
-      updateDeviceToken(userId: currentUser.id, token: AppModel.deviceToken);
-    } else if (response.statusCode == 404) {
-      emit(state.copyWith(getHomeProviderState: RequestState.loaded));
+      if (response.statusCode == 200) {
+        String jsonDataString = await response.stream.bytesToString();
+        final jsonData = jsonDecode(jsonDataString);
+
+        HomeResponseProvider homeResponseProvider =
+            HomeResponseProvider.fromJson(jsonData);
+
+        currentProvider = homeResponseProvider.provider;
+        categories = homeResponseProvider.categories!;
+
+        emit(state.copyWith(
+            getHomeProviderState: RequestState.loaded,
+            homeResponseProvider: homeResponseProvider,
+            orders: homeResponseProvider.orders!
+                .where((element) => element.order.status == 0)
+                .toList()));
+
+        updateDeviceToken(userId: currentUser.id, token: AppModel.deviceToken);
+      } else if (response.statusCode == 404) {
+
+        emit(state.copyWith(getHomeProviderState: RequestState.loaded));
+
+      } else {
+
+        emit(state.copyWith(getHomeProviderState: RequestState.error));
+      }
     } else {
-      emit(state.copyWith(getHomeProviderState: RequestState.error));
+
+      emit(state.copyWith(getHomeProviderState: RequestState.noInternet));
     }
   }
 
@@ -335,16 +417,21 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(currentPageSlider: newIndex));
   }
 
-  Future updateUserProfile(int type, {context, value}) async {
+  Future updateUserProfile(int type, {context, name, city, image}) async {
     showUpdatesLoading(context);
     emit(state.copyWith(updateUserState: RequestState.loading));
     var request =
         http.MultipartRequest('POST', Uri.parse(ApiConstants.updateUserPath));
-    if (type == 0) {
-      request.fields.addAll({'fullName': value, 'UserId': currentUser.id!});
-    } else {
-      request.fields.addAll({'UserId': currentUser.id!, 'city': value});
-    }
+    // if (type == 0) {
+    request.fields.addAll({
+      'fullName': name,
+      'UserId': currentUser.id!,
+      'city': city,
+      'ProfileImage': image
+    });
+    // } else {
+    //   request.fields.addAll({'UserId': currentUser.id!, 'city': value});
+    // }
 
     http.StreamedResponse response = await request.send();
     if (kDebugMode) {
@@ -365,6 +452,7 @@ class HomeCubit extends Cubit<HomeState> {
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
+      pushPageRoutName(context, navUser);
       emit(state.copyWith(
           updateUserState: RequestState.loading, userModel: userModel));
     } else {
@@ -373,8 +461,43 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+// ** upload image
+  Future uploadImage(int type) async {
+    File image;
+    final picker = ImagePicker();
+
+    var pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 50, // <- Reduce Image quality
+        maxHeight: 500, // <- reduce the image size
+        maxWidth: 500);
+
+    if (pickedFile != null) {
+      image = File(pickedFile.path);
+
+      emit(state.copyWith(imageProfileUserState: RequestState.loading));
+
+      String fileName = image.path.split('/').last;
+      FormData data = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          image.path,
+          filename: fileName,
+        ),
+      });
+      final response =
+          await Dio().post(ApiConstants.uploadImagesPath, data: data);
+      if (response.statusCode == 200) {
+        emit(state.copyWith(
+            imageProfileUserState: RequestState.loaded,
+            imageLogo: response.data));
+      } else {
+        emit(state.copyWith(imageProfileUserState: RequestState.error));
+      }
+    }
+  }
+
 // Todo : refactor
-  updateDeviceToken({userId, token}) async {
+  updateDeviceToken({userId, token, context}) async {
     emit(state.copyWith(updateDeviceTokenState: RequestState.loading));
     // var headers = {'Authorization': currentUser.token!};
     var request = http.MultipartRequest(

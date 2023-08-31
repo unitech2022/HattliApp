@@ -1,6 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:hatlli/core/enums/loading_status.dart';
 import 'package:hatlli/core/layout/app_sizes.dart';
 import 'package:hatlli/core/layout/palette.dart';
@@ -19,6 +20,7 @@ import '../../../../core/widgets/text_field_widget.dart';
 import '../../../../core/widgets/texts.dart';
 
 import '../../../user/ui/home_user_screen/home_user_screen.dart';
+import '../add_product_screen/add_product_screen.dart';
 
 class EditAccountProviderScreen extends StatefulWidget {
   final int providerId;
@@ -36,6 +38,9 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
 
   final _controllerEmail = TextEditingController();
 
+   final _controllerNameBank = TextEditingController();
+  final _controllerIBanBank = TextEditingController();
+
   String? currenValue;
   @override
   void dispose() {
@@ -43,6 +48,8 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
     _controllerAdminName.dispose();
     _controllerEmail.dispose();
     _controllerNameCompany.dispose();
+    _controllerNameBank.dispose();
+    _controllerIBanBank.dispose();
   }
 
   @override
@@ -65,6 +72,11 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
               state.detailsProviderResponse!.provider!.title;
           _controllerEmail.text =
               state.detailsProviderResponse!.provider!.email;
+
+                _controllerNameBank.text =
+              state.detailsProviderResponse!.provider!.nameBunk;
+          _controllerIBanBank.text =
+              state.detailsProviderResponse!.provider!.iBan;
         }
       },
       builder: (context, state) {
@@ -86,8 +98,8 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
             //           height: 17,
             //           width: 26,
             //         ))),
-            title: const Texts(
-                title: "تعديل البيانات",
+            title:  Texts(
+                title: "تعديل البيانات".tr(),
                 family: AppFonts.taB,
                 size: 18,
                 widget: FontWeight.bold),
@@ -106,19 +118,15 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                               ? const CustomCircularProgress(
                                   size: Size(AppSize.s50, AppSize.s50),
                                 )
-                              : GestureDetector(
-                                  onTap: () {
-                                    ProviderCubit.get(context).uploadImage(0);
-                                  },
-                                  child: CircleImageNetwork(
-                                    imageError: "assets/images/person2.png",
-                                    image:
-                                        ApiConstants.imageUrl(state.imageLogo),
-                                    height: 66,
-                                    width: 66,
-                                    colorBackground: Palette.mainColor,
-                                  ),
-                                ),
+                              : CircleImageNetwork(
+                                imageError: "assets/images/person2.png",
+                                image:
+                                    ApiConstants.imageUrl(state.imageLogo),
+                                height: 66,
+                                width: 66,
+                                colorBackground: Palette.mainColor,
+                              ),
+
                           const SizedBox(
                             height: 9,
                           ),
@@ -132,44 +140,46 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                           const SizedBox(
                             height: 20,
                           ),
+
+                          TitleAccountWidget(title:  "اسم الشركة".tr(),),
                           TextFieldWidget(
                             controller: _controllerNameCompany,
-                            hint: "اسم الشركة",
+                            hint: "اسم الشركة".tr(),
                             icon: const SizedBox(),
                             type: TextInputType.text,
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 25,
                           ),
+                          TitleAccountWidget(title: "ايميل الشؤكة".tr(),),
                           TextFieldWidget(
                             controller: _controllerEmail,
-                            hint: "ايميل الشؤكة",
+                            hint: "ايميل الشؤكة".tr(),
                             icon: const SizedBox(),
                             type: TextInputType.text,
                           ),
                           const SizedBox(
                             height: 15,
                           ),
+                          TitleAccountWidget(title: "الشخص المسئول".tr(),),
                           TextFieldWidget(
                             controller: _controllerAdminName,
-                            hint: "الشخص المسئول",
+                            hint: "الشخص المسئول".tr(),
                             icon: const SizedBox(),
                             type: TextInputType.text,
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 25,
                           ),
-                          state.imagePassportState == RequestState.loading
-                              ? const CustomCircularProgress(
-                                  size: Size(AppSize.s50, AppSize.s50),
-                                )
-                              : GestureDetector(
+
+                          TitleAccountWidget(title: "صورة الاثبات".tr(),),
+                          GestureDetector(
                                   onTap: () {
                                     ProviderCubit.get(context).uploadImage(1);
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 20),
+                                        horizontal: 15, vertical: 10),
                                     decoration: BoxDecoration(
                                       color: const Color(0xfffefefe),
                                       borderRadius: BorderRadius.circular(10.0),
@@ -189,73 +199,83 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Texts(
-                                              title: "إرفاق الاثبات",
+                                           Texts(
+                                              title: "إرفاق الاثبات".tr(),
                                               family: AppFonts.taM,
                                               size: 14,
                                               textColor: Colors.black,
                                               widget: FontWeight.normal),
-                                          SvgPicture.asset(
-                                              "assets/icons/upload.svg")
+                                           CircleImageNetwork(height: 30, width: 30,
+                              image: ApiConstants.imageUrl(state.imagePassport),
+                              imageError: "", colorBackground: Colors.white)
                                         ],
                                       ),
                                       const SizedBox(
                                         height: 15,
                                       ),
-                                      Row(
-                                        children: [
-                                          Texts(
-                                              title: state.imagePassport!,
-                                              // "(الرخصة التجارية -الشهادة الضريبية - صورة الجواز - الهوية)",
-                                              family: AppFonts.taM,
-                                              size: 10,
-                                              textColor:
-                                                  const Color(0xff292626),
-                                              widget: FontWeight.normal),
-                                        ],
-                                      ),
+                                      // Row(
+                                      //   children: [
+                                      //     Texts(
+                                      //         title: state.imagePassport!,
+                                      //         // "(الرخصة التجارية -الشهادة الضريبية - صورة الجواز - الهوية)",
+                                      //         family: AppFonts.taM,
+                                      //         size: 10,
+                                      //         textColor:
+                                      //             const Color(0xff292626),
+                                      //         widget: FontWeight.normal),
+                                      //   ],
+                                      // ),
+                                  
                                     ]),
                                   ),
                                 ),
                           const SizedBox(
-                            height: 15,
+                            height: 25,
                           ),
 
                           //** logo company  */
-                          Container(
-                            height: 66,
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 20),
-                            decoration: BoxDecoration(
-                              color: const Color(0xfffefefe),
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(
-                                  width: 1.0, color: const Color(0xfff6f6f7)),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x0f000000),
-                                  offset: Offset(1, 1),
-                                  blurRadius: 6,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Texts(
-                                    title: "إرفاق شعار الشركة",
-                                    family: AppFonts.taM,
-                                    size: 14,
-                                    textColor: Colors.black,
-                                    widget: FontWeight.normal),
-                                SvgPicture.asset("assets/icons/upload.svg")
-                              ],
+                          GestureDetector(
+                            onTap: (){
+                            ProviderCubit.get(context).uploadImage(0);
+                            },
+                            child: Container(
+                              height: 66,
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xfffefefe),
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                    width: 1.0, color: const Color(0xfff6f6f7)),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x0f000000),
+                                    offset: Offset(1, 1),
+                                    blurRadius: 6,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                   Texts(
+                                      title: "إرفاق شعار الشركة".tr(),
+                                      family: AppFonts.taM,
+                                      size: 14,
+                                      textColor: Colors.black,
+                                      widget: FontWeight.normal),
+                                   CircleImageNetwork(height: 30, width: 30,
+                              image: ApiConstants.imageUrl( state.imageLogo),
+                              imageError: "", colorBackground: Colors.white)
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(
                             height: 15,
                           ),
+                          TitleAccountWidget(title: "التصنيف".tr(),),
                           Container(
                             height: 62,
                             padding: const EdgeInsets.symmetric(
@@ -285,20 +305,144 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                                   ProviderCubit.get(context)
                                       .changeCurrentCategory(value);
                                 },
-                                hint:state.categoryModel!=null?state.categoryModel!.name:"اختيار الخدمة التي تقدمها"),
+                                hint: state.categoryModel != null
+                                    ? state.categoryModel!.name
+                                    : "اختيار الخدمة التي تقدمها".tr()),
+                          ),
+                          const SizedBox(
+                            height: 15,
                           ),
 
+// ** area
+                          TitleAccountWidget(title: "النطاق".tr(),),
+                          FieldAddProduct(
+                            title: state.area != null
+                                ? state.area.toString() + " KG "
+                                : "النطاق".tr(),
+                            onTap: () {
+                              showBottomSheetWidget(
+                                  context,
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 40,
+                                        left: 30,
+                                        right: 30,
+                                        bottom: 20),
+                                    decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            topRight: Radius.circular(15))),
+                                    height: 600,
+                                    width: double.infinity,
+                                    child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                           Texts(
+                                              title:
+                                                  "حدد النطاق الذى تريد البيع فيه".tr(),
+                                              family: AppFonts.taB,
+                                              size: 18),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Expanded(
+                                              child: ListView.builder(
+                                                  itemCount: areas.length,
+                                                  itemBuilder: (ctx, index) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        ProviderCubit.get(
+                                                                context)
+                                                            .changeArea(
+                                                                areas[index]);
+                                                        pop(context);
+                                                        
+                                                      },
+                                                      child: Container(
+                                                        height: 60,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration: const BoxDecoration(
+                                                            border: Border(
+                                                                bottom: BorderSide(
+                                                                    color: Colors
+                                                                        .black45,
+                                                                    width:
+                                                                        .8))),
+                                                        child: Row(
+                                                          children: [
+                                                            Texts(
+                                                                title: areas[
+                                                                            index]
+                                                                        .toString() +
+                                                                    " KM",
+                                                                family: AppFonts
+                                                                    .taM,
+                                                                size: 15),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }))
+                                        ]),
+                                  ));
+                            },
+                            child: SizedBox(),
+                          ),
+
+   // ** data bank
+                      const SizedBox(
+                        height: 25,
+                      ),
+
+                      Texts(
+                          title: "بيانات البنك".tr(),
+                          family: AppFonts.taB,
+                          size: 20,
+                          textColor: Colors.black,
+                          widget: FontWeight.w700),
+
+                 //** */ name Bank
+                      const SizedBox(
+                        height: 15,
+                      ),
+                 TitleAccountWidget(title: "اسم البنك".tr(),),
+                      TextFieldWidget(
+                        controller: _controllerNameBank,
+                        hint: "اسم البنك".tr(),
+                        icon: const SizedBox(),
+                        type: TextInputType.text,
+                      ),
+                  
+
+                        const SizedBox(
+                        height: 25,
+                      ),
+                 TitleAccountWidget(title: "IBan".tr(),),
+                      TextFieldWidget(
+                        controller: _controllerIBanBank,
+                        hint: "اسم البنك".tr(),
+                        icon: const SizedBox(),
+                        type: TextInputType.text,
+                      ),
+                  
+                  
+                     
                           const SizedBox(
                             height: 50,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: CustomButton(
-                                title: Strings.save,
+                                title: Strings.save.tr(),
                                 onPressed: () {
                                   if (validate(context, state)) {
                                     Provider provider = Provider(
                                         id: widget.providerId,
+                                        area: state.area!,
+                                        iBan: _controllerIBanBank.text,
+                                        nameBunk: _controllerNameBank.text,
                                         categoryId: state.categoryModel!.id,
                                         title: _controllerNameCompany.text,
                                         email: _controllerEmail.text,
@@ -315,6 +459,8 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                                         status: 0,
                                         discount: 0,
                                         distance: 0,
+                                        wallet: state.detailsProviderResponse!
+                                            .provider!.wallet,
                                         createdAt: "");
                                     ProviderCubit.get(context).updateProvider(
                                         provider,
@@ -344,9 +490,9 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
         _controllerNameCompany.text == "") {
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.error(
+          customBar:  CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message: "اكتب اسم الشركة",
+            message: "اكتب اسم الشركة".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
@@ -354,9 +500,9 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
     } else if (_controllerEmail.text.isEmpty || _controllerEmail.text == "") {
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.error(
+          customBar:  CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message: "اكتب ايميل الشركة",
+            message: "اكتب ايميل الشركة".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
@@ -365,9 +511,9 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
         _controllerAdminName.text == "") {
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.error(
+          customBar:  CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message: "اكتب اسم الشخص المسئول",
+            message: "اكتب اسم الشخص المسئول".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
@@ -375,15 +521,59 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
     } else if (state.categoryModel == null) {
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.error(
+          customBar:  CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message: "اختار نوع الخدمة ",
+            message: "اختار نوع الخدمة ".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       return false;
-    } else {
+    }else if (_controllerNameBank.text.isEmpty || _controllerNameBank.text == "") {
+      showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.error(
+            backgroundColor: Colors.red,
+            message: "اكتب اسم البنك".tr(),
+            textStyle: TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),
+          ));
+      return false;
+    } else if (_controllerIBanBank.text.isEmpty || _controllerIBanBank.text == "") {
+      showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.error(
+            backgroundColor: Colors.red,
+            message:"اكتب أيبان البنك".tr(),
+            textStyle: TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),
+          ));
+      return false;
+    }else {
       return true;
     }
+  }
+}
+
+class TitleAccountWidget extends StatelessWidget {
+  final String title;
+  const TitleAccountWidget({
+    super.key, required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 3,left: 20,right: 20),
+      child: Row(
+        children: [
+          Texts(
+              title:title,
+              family: AppFonts.taM,
+              size: 14,
+              textColor:Palette.mainColor,
+              widget: FontWeight.normal),
+        ],
+      ),
+    );
   }
 }

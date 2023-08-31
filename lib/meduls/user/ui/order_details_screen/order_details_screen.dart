@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:hatlli/meduls/user/ui/order_details_screen/components/details_pr
 import 'package:hatlli/meduls/user/ui/order_details_screen/traking_order_screen/traking_order_screen.dart';
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
+import '../../../../core/widgets/back_button.dart';
 import '../../../../core/widgets/circular_progress.dart';
 import '../../../../core/widgets/texts.dart';
 
@@ -41,18 +43,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: GestureDetector(
-            onTap: () {
-              pop(context);
-            },
-            child: const Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            )),
-        title: const Texts(
-            title: "تفاصيل الطلب",
+        leading: BackButtonWidget(),
+        title: 
+         Texts(
+            title: "تفاصيل الطلب".tr(),
             family: AppFonts.taB,
             size: 18,
+            height: 1.0,
             widget: FontWeight.bold),
         actions: [
             IconAlertWidget()
@@ -121,10 +118,37 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ),
                           //** order Details */
                           DetailsOrderWidget(
-                            total: state.orderDetailsResponse!.order!.totalCost,
+                            total: state.orderDetailsResponse!.order!.totalCost ,
                             status: state.orderDetailsResponse!.order!.status,
                           )
                           //** ========== */
+                          // ** COMMENTS ORDER
+                           , SizedBox(
+                            height: 17,
+                          ),
+                        
+                state.orderDetailsResponse!.order!.notes.isNotEmpty&&  state.orderDetailsResponse!.order!.notes !="not"?      Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Texts(
+                        title:  "ملحوظة".tr(),
+                        family: AppFonts.taB,
+                        size: 14,
+                        textColor: Colors.red),
+                        SizedBox(height: 10,),
+                         Texts(
+                        title:state.orderDetailsResponse!.order!.notes,
+                        family: AppFonts.taB,
+                        line: 30,
+                        size: 14,
+                        textColor: Color.fromARGB(255, 71, 71, 71))
+                              ],
+                            ),
+                  ],
+                ):SizedBox()
+
                         ]),
                       ),
                       const SizedBox(
@@ -133,7 +157,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       //** button cancel  Order*/
 
                       currentUser.role == AppModel.userRole
-                          ? state.orderDetailsResponse!.order!.status == 0
+                          ? state.orderDetailsResponse!.order!.status == 0&&state.orderDetailsResponse!.order!.payment==0
                               ? ButtonUserOrder(state)
                               : const SizedBox()
                           : state.orderDetailsResponse!.order!.status == 4
@@ -164,7 +188,7 @@ class ButtonUserOrder extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomButton(
-          title: "الغاء الطلب",
+          title: "الغاء الطلب".tr(),
           onPressed: () {
             OrderCubit.get(context).updateOrder(
                 4, state.orderDetailsResponse!.order!.id,0,
@@ -190,26 +214,26 @@ class ButtonProviderOrder extends StatelessWidget {
 
           CustomButton(
               title: state.orderDetailsResponse!.order!.status > 0
-                  ? "متابعة الطلب"
-                  : "تأكيد الطلب",
+                  ? "متابعة الطلب".tr()
+                  : "تأكيد الطلب".tr(),
               onPressed: () {
                 if (state.orderDetailsResponse!.order!.status == 0) {
                   OrderCubit.get(context).updateOrder(
                       1, state.orderDetailsResponse!.order!.id,1,
                       context: context);
                 } else {
-                  pushPage(context, const TrackingOrderScreen());
+                  pushPage(context,  TrackingOrderScreen(lat:state.orderDetailsResponse!.address!.lat! ,lng:state.orderDetailsResponse!.address!.lng!));
                 }
               }),
-               state.orderDetailsResponse!.order!.status == 0
+               state.orderDetailsResponse!.order!.status == 0 && state.orderDetailsResponse!.order!.payment==0
               ? TextButton(
                   onPressed: () {
                     OrderCubit.get(context).updateOrder(
                         4, state.orderDetailsResponse!.order!.id,1,
                         context: context);
                   },
-                  child: const Text(
-                    "الغاء الطلب",
+                  child:  Text(
+                    "الغاء الطلب".tr(),
                     style:
                         TextStyle(fontFamily: AppFonts.caB, color: Colors.red),
                   ))

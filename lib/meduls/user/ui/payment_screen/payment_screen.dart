@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hatlli/meduls/common/ui/payment/payment.dart';
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/palette.dart';
@@ -9,10 +11,10 @@ import '../../../../core/widgets/icon_alert_widget.dart';
 import '../../../../core/widgets/texts.dart';
 import '../../../common/bloc/order_cubit/order_cubit.dart';
 
-
 class PaymentScreen extends StatelessWidget {
-
-  const PaymentScreen({super.key});
+  final double total;
+  final String note;
+  const PaymentScreen({super.key, required this.total,required this.note});
 
   @override
   Widget build(BuildContext context) {
@@ -30,50 +32,78 @@ class PaymentScreen extends StatelessWidget {
                   Icons.arrow_back,
                   color: Colors.black,
                 )),
-            title: const Texts(
-                title: "اختر عملية الدفع",
+            title: Texts(
+                title: "اختر عملية الدفع".tr(),
                 family: AppFonts.taB,
                 size: 18,
                 widget: FontWeight.bold),
             actions: [
-               IconAlertWidget(),
+              IconAlertWidget(),
             ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(35),
             child: Column(
               children: [
-                //** payment mthods */
+                //** payment methods */
                 ContainerRadioButton(
-                  title: "بطاقة ائتمان",
-                  borderColor: const Color(0xffABABB7),
+                  title: "الدفع كاش".tr(),
+                  borderColor: state.payment == 0
+                      ? Palette.mainColor
+                      : const Color(0xffABABB7),
+                  image: "assets/icons/cash.svg",
+                  color: state.payment == 0
+                      ? Palette.mainColor
+                      : Colors.transparent,
+                  onTap: () {
+                    OrderCubit.get(context).changePayMentMethod(0);
+                  },
+                ),
+                ContainerRadioButton(
+                  borderColor: state.payment == 1
+                      ? Palette.mainColor
+                      : const Color(0xffABABB7),
+                  title: "دفع أونلاين".tr(),
                   image: "assets/icons/pay1.svg",
-                  color: Colors.transparent,
-                  onTap: () {},
+                  color: state.payment == 1
+                      ? Palette.mainColor
+                      : Colors.transparent,
+                  onTap: () {
+                    OrderCubit.get(context).changePayMentMethod(1);
+                  },
                 ),
-                ContainerRadioButton(
-                  borderColor: const Color(0xffABABB7),
-                  title: "باي بال",
-                  image: "assets/icons/paypal.svg",
-                  color: Colors.transparent,
-                  onTap: () {},
-                ),
-                ContainerRadioButton(
-                  borderColor: const Color(0xffABABB7),
-                  title: "جوجل باي",
-                  image: "assets/icons/google.svg",
-                  color: Colors.transparent,
-                  onTap: () {},
-                ),
+                // ContainerRadioButton(
+                //   borderColor: const Color(0xffABABB7),
+                //   title: "جوجل باي",
+                //   image: "assets/icons/google.svg",
+                //   color: Colors.transparent,
+                //   onTap: () {},
+                // ),
+
                 const SizedBox(
                   height: 65,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: CustomButton(
-                    title: "تأكيد الطلب",
+                    title: "تأكيد الطلب".tr(),
                     onPressed: () {
-                      OrderCubit.get(context).addOrder(0,context: context);
+                      if (state.payment == 0) {
+                        OrderCubit.get(context)
+                            .addOrder(state.payment, context: context,nots: note);
+                      } else {
+                        // print(total);
+                        pushPage(
+                            context,
+                            PaymentMethodsConfirmed(
+                              note:note,
+                              total: total.toInt() * 100 + 1,
+                              productId: 0,
+                              providerId: 0,
+                              type: 0,
+                              quntity: 0,
+                            ));
+                      }
                     },
                     backgroundColor: Palette.mainColor,
                   ),

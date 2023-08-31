@@ -2,11 +2,11 @@ class UserDetailsPref{
 
 
    String? token;
- String? userName;
+   String? userName;
    String? id;
 
    String? role;
-
+ 
    String? deviceToken;
 
    UserDetailsPref(

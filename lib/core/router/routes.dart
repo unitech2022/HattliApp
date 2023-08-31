@@ -13,8 +13,10 @@ const fav = "/fav";
 const notyUser = "/notyUser";
 const abouteUs = "/abouteUs";
 const praivcy = "/praivcy";
+const quizscreen = "/quiz";
 const navProvider = "/navProvider";
 const statistics = "/statistics";
+const lang = "/lang";
 
 
 

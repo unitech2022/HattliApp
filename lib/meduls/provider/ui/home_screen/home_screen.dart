@@ -1,4 +1,4 @@
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +10,7 @@ import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/widgets/texts.dart';
 import '../../../user/ui/components/search_container_widget.dart';
+import '../../../user/ui/navigation_user_screen/navigation_user_screen.dart';
 import '../../../user/ui/product_details_screen/product_details_screen.dart';
 import '../../../user/ui/search_products_screen/search_products_screen.dart';
 import 'components/list_orders_provider.dart';
@@ -23,8 +24,6 @@ class HomeProviderScreen extends StatefulWidget {
 }
 
 class _HomeProviderScreenState extends State<HomeProviderScreen> {
-
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,11 +42,18 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                 const SizedBox(
                   height: 25,
                 ),
-                 ContainerSearchWidget(text:"" ,onTap: (value) {
-                 FocusManager.instance.primaryFocus?.unfocus();
-                            pushPage(context,
-                                SearchProductsScreen(textSearch: value,type: 1,));
-                 },),
+                ContainerSearchWidget(
+                  text: "",
+                  onTap: (value) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    pushPage(
+                        context,
+                        SearchProductsScreen(
+                          textSearch: value,
+                          type: 1,
+                        ));
+                  },
+                ),
                 const SizedBox(
                   height: 30,
                 ),
@@ -56,17 +62,38 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                   child: Column(
                     children: [
                       // ** status Account
-                      StatusAccountText(
-                        image: state.homeResponseProvider!.provider!.status == 0
-                            ? "assets/icons/review.svg"
-                            : "assets/icons/success.svg",
-                        title: state.homeResponseProvider!.provider!.status == 0
-                            ? "حسابك قيد المراجعة"
-                            : "تم تفعيل الحساب",
-                        textColor:
-                            state.homeResponseProvider!.provider!.status == 0
-                                ? Colors.red
-                                : Colors.green,
+                      GestureDetector(
+                        onTap: () {
+                          if (state.homeResponseProvider!.provider!.wallet <=
+                              -100) {
+                            showBottomSheetWidget(context, callUs(context));
+                          }
+                        },
+                        child: StatusAccountText(
+                          image: state.homeResponseProvider!.provider!.status ==
+                                      0 ||
+                                  state.homeResponseProvider!.provider!
+                                          .wallet <=
+                                      -100
+                              ? "assets/icons/review.svg"
+                              : "assets/icons/success.svg",
+                          title: state.homeResponseProvider!.provider!.status ==
+                                  0
+                              ? "حسابك قيد المراجعة".tr()
+                              : state.homeResponseProvider!.provider!.wallet <=
+                                      -100
+                                  ? "يجب دفع المبلغ المستحق حتي يتم تفعيل الحساب"
+                                      .tr()
+                                  : "تم تفعيل الحساب".tr(),
+                          textColor:
+                              state.homeResponseProvider!.provider!.status ==
+                                          0 ||
+                                      state.homeResponseProvider!.provider!
+                                              .wallet <=
+                                          -100
+                                  ? Colors.red
+                                  : Colors.green,
+                        ),
                       )
                       //** ====== */
                       ,
@@ -80,20 +107,20 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                       const SizedBox(
                         height: 18,
                       ),
-                       ListProductsWidget(list:lists),
+                      ListProductsWidget(list: lists),
                       const SizedBox(
                         height: 10,
                       ),
-                       IndicatorWidget(state.currentPageSlider, lists.length),
+                      IndicatorWidget(state.currentPageSlider, lists.length),
                       const SizedBox(
                         height: 23,
                       ),
                       state.homeResponseProvider!.orders!.isEmpty
                           ? const SizedBox()
-                          : const Row(
+                          : Row(
                               children: [
                                 Texts(
-                                    title: "الطلبات",
+                                    title: "الطلبات".tr(),
                                     family: AppFonts.taB,
                                     size: 18),
                               ],
@@ -103,7 +130,10 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                       ),
 
                       //*** list Orders */
-                      ListOrdersProvider(orders: state.homeResponseProvider!.orders!.where((element) => element.order.status==0).toList())
+                      ListOrdersProvider(
+                          orders: state.homeResponseProvider!.orders!
+                              .where((element) => element.order.status == 0)
+                              .toList())
                     ],
                   ),
                 ))
@@ -116,8 +146,6 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
   }
 }
 
-
-
 class RowTitleProducts extends StatelessWidget {
   const RowTitleProducts({
     super.key,
@@ -128,22 +156,19 @@ class RowTitleProducts extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Texts(title: "منتجاتك", family: AppFonts.taB, size: 18),
-        InkWell(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SvgPicture.asset("assets/icons/edit.svg"),
-              const SizedBox(
-                width: 10,
-              ),
-              const Texts(
-                title: "تعديل التصنيفات",
-                family: AppFonts.taM,
-                size: 12,
-                textColor: Color(0xffFFA827),
-              )
-            ],
+        Texts(title: "منتجاتك".tr(), family: AppFonts.taB, size: 18),
+        MaterialButton(
+          minWidth: 0,
+          height: 0,
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            HomeCubit.get(context).changeCurrentIndexNav(2);
+          },
+          child: Texts(
+            title: "الكل".tr(),
+            family: AppFonts.taM,
+            size: 12,
+            textColor: Color(0xffFFA827),
           ),
         )
       ],
@@ -174,15 +199,49 @@ class StatusAccountText extends StatelessWidget {
           width: 5,
         ),
         Texts(
-            title: title, family: AppFonts.taB, size: 12, textColor: textColor)
+            line: 2,
+            title: title,
+            family: AppFonts.taB,
+            size: 12,
+            textColor: textColor)
       ],
     );
   }
 }
 
 //** app bar widget */
-AppBar appBarWidget({scaffolded, title,context,countNoty=0}) => AppBar(
+AppBar appBarWidget({scaffolded, title, context, countNoty = 0}) => AppBar(
       backgroundColor: Colors.white,
+      elevation: 0,
+      leading: MenuIconWidget(scaffoldkey: scaffolded),
+      title: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Texts(
+            title: title,
+            family: AppFonts.taB,
+            size: 18,
+            widget: FontWeight.bold),
+      ),
+      actions: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 15, left: 10),
+            //   child: SvgPicture.asset("assets/icons/fillter2.svg"),
+            // ),
+            const SizedBox(
+              width: 10,
+            ),
+            IconAlertWidget()
+          ],
+        ),
+      ],
+    );
+
+AppBar appBarWidgetUser({scaffolded, title, context, countNoty = 0}) => AppBar(
+      backgroundColor: Colors.transparent,
       elevation: 0,
       leading: GestureDetector(
           onTap: () {
@@ -204,19 +263,6 @@ AppBar appBarWidget({scaffolded, title,context,countNoty=0}) => AppBar(
             widget: FontWeight.bold),
       ),
       actions: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 15, left: 10),
-              child: SvgPicture.asset("assets/icons/fillter2.svg"),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-             IconAlertWidget()
-          ],
-        ),
+        IconAlertWidget(),
       ],
     );

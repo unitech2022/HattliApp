@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 
 
@@ -136,14 +137,14 @@ class UserModel extends Equatable {
         id: json['id'],
         userName: json['userName'],
         role: json['role'],
-        email: json['email'] ?? "غير مسجل",
-        fullName: json['fullName'] ?? "غير مسجل",
+        email: json['email'] ?? "غير مسجل".tr(),
+        fullName: json['fullName'] ?? "غير مسجل".tr(),
         deviceToken: json['deviceToken']??"",
         status: json['status'],
         about: json['about'] ?? "",
         code: json['code'],
         profileImage: json['profileImage'] ?? "",
-        city: json['city'] ??"غير مسجلة",
+        city: json['city'] ??"غير مسجلة".tr(),
         points: json['points'].toDouble(),
         address: json['address'] ?? "",
         lat: json['lat'].toDouble(),

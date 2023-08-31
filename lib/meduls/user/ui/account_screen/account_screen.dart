@@ -1,163 +1,203 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:hatlli/core/extension/theme_extension.dart';
+import 'package:hatlli/core/layout/palette.dart';
 import 'package:hatlli/core/layout/screen_size.dart';
 import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
 import 'package:hatlli/meduls/user/ui/account_screen/update_profile_screen.dart';
+import 'package:hatlli/meduls/user/ui/components/login_widget.dart';
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/app_radius.dart';
 
-import '../../../../core/widgets/icon_alert_widget.dart';
+import '../../../../core/utils/api_constatns.dart';
 import '../../../../core/widgets/texts.dart';
-import '../components/darwer_widget.dart';
+import '../home_user_screen/home_user_screen.dart';
 
-
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
   AccountScreen({super.key});
 
-  final scaffoldkey = GlobalKey<ScaffoldState>();
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  GlobalKey<ScaffoldState> scaffoldkey4 = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scaffoldkey,
-        drawer: const DrawerWidget(),
-        appBar: AppBar(
-          backgroundColor: const Color(0xffFEFEFE),
-          elevation: 0,
-          leading: GestureDetector(
-              onTap: () {
-                scaffoldkey.currentState!.openDrawer();
-              },
-              child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: SvgPicture.asset(
-                    "assets/icons/menu.svg",
-                    height: 17,
-                    width: 26,
-                  ))),
-          title: const Texts(
-              title: "حسابي",
-              family: AppFonts.taB,
-              size: 18,
-              widget: FontWeight.bold),
-          actions: [
-             IconAlertWidget()  ],
-        ),
+        key: scaffoldkey4,
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 50, left: 16, right: 16),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(30),
-                    decoration: BoxDecoration(
-                      color: const Color(0xfffcfcfd),
-                      borderRadius: BorderRadius.circular(15),
-                      // border: Border.all(width: .6,color: Colors.grey),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x269b9b9b),
-                          offset: Offset(0, 0),
-                          blurRadius: 50,
-                        ),
-                      ],
+            return isLogin()
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      left: 22,
+                      right: 22,
+                      top:100,
                     ),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      ContainerItemAccount(
-                        onTap: () {
-                          pushPage(
-                              context,
-                              UpdateProfileScreen(
-                                  value: state.userModel!.fullName, type: 0));
-                        },
-                        title: "الأسم  : ",
-                        value: state.userModel!.fullName,
-                        image: "assets/icons/account2.svg",
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ContainerItemAccount(
-                        onTap: () {},
-                        title: "رقم الهاتف  : ",
-                        value: state.userModel!.userName,
-                        image: "assets/icons/call2.svg",
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ContainerItemAccount(
-                        onTap: () {
-                          pushPage(
-                              context,
-                              UpdateProfileScreen(
-                                  value: state.userModel!.city, type: 1));
-                        },
-                        title: "المدينة  : ",
-                        value: state.userModel!.city,
-                        image: "assets/icons/location_tick.svg",
-                      )
-                    ]),
-                  ),
-                  const Spacer(),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15),
-                    width: context.wSize,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        signOut(ctx: context);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          // onPressed == null ? Palette.kGreyColor : Palette.mainColor,
-                          const Color(0xffD13A3A),
-                        ),
-                        elevation: MaterialStateProperty.all(12),
-                        shape: MaterialStateProperty.resolveWith((states) {
-                          if (!states.contains(MaterialState.pressed)) {
-                            return const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5),
+                    child: Column(
+                      children: [
+                        MaterialButton(
+                          onPressed: () {
+                            pushPage(
+                                    context,
+                                    UpdateProfileScreen(
+                                        user: state.userModel!, type: 1));
+                          },
+                          child: Row(
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset("assets/icons/edit.svg"),
+                                  const SizedBox(
+                                    width: 18,
+                                  ),
+                                   Texts(
+                                      title: "تعديل البيانات".tr(),
+                                      family: AppFonts.taM,
+                                      size: 12)
+                                ],
                               ),
-                              side: BorderSide.none,
-                            );
-                          }
-                          return const RoundedRectangleBorder(
-                            borderRadius: AppRadius.r10,
-                          );
-                        }),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset("assets/icons/logout2.svg"),
-                          const SizedBox(
-                            width: 10,
+                            ],
                           ),
-                          Text(
-                            "تسجيل الخروج",
-                            style: context.titleM.copyWith(
-                              fontSize: 12,
-                              color: Colors.white,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: AppFonts.caSi,
+                        ),
+                       
+                     
+                        Container(
+                          padding: const EdgeInsets.all(30),
+                          // decoration: BoxDecoration(
+                          //   color: const Color(0xfffcfcfd),
+                          //   borderRadius: BorderRadius.circular(15),
+                          //   // border: Border.all(width: .6,color: Colors.grey),
+                          //   boxShadow: const [
+                          //     BoxShadow(
+                          //       color: Color(0x269b9b9b),
+                          //       offset: Offset(0, 0),
+                          //       blurRadius: 50,
+                          //     ),
+                          //   ],
+                          // ),
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+
+                                   Container(
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Palette.mainColor, width: 2)),
+                          child: CircleImageNetwork(
+                            imageError: "assets/images/person.png",
+                            image: ApiConstants.imageUrl(
+                                state.homeUserResponse!.user!.profileImage),
+                            height: 76,
+                            width: 76,
+                            colorBackground: Palette.mainColor,
+                          ),
+                        ),
+                          SizedBox(
+                          height: 45,
+                        ),
+                            ContainerItemAccount(
+                              onTap: () {
+                                // pushPage(
+                                //     context,
+                                //     UpdateProfileScreen(
+                                //         value: state.userModel!.fullName,
+                                //         type: 0));
+                              },
+                              title: "الأسم  : ".tr(),
+                               isPhone: true,
+                              value: state.userModel!.fullName,
+                              image: "assets/icons/account2.svg",
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ContainerItemAccount(
+                              onTap: () {},
+                              isPhone: true,
+                              title: "رقم الهاتف  : ".tr(),
+                              value: state.userModel!.userName,
+                              image: "assets/icons/call2.svg",
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            ContainerItemAccount(
+                              onTap: () {
+                                
+                              },
+                              title: "المدينة  : ".tr(),
+                              value: state.userModel!.city,
+                              isPhone: true,
+                              image: "assets/icons/location_tick.svg",
+                            )
+                          ]),
+                        ),
+                        const Spacer(),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 15),
+                          width: context.wSize,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              signOut(ctx: context);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                // onPressed == null ? Palette.kGreyColor : Palette.mainColor,
+                                const Color(0xffD13A3A),
+                              ),
+                              elevation: MaterialStateProperty.all(12),
+                              shape:
+                                  MaterialStateProperty.resolveWith((states) {
+                                if (!states.contains(MaterialState.pressed)) {
+                                  return const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    side: BorderSide.none,
+                                  );
+                                }
+                                return const RoundedRectangleBorder(
+                                  borderRadius: AppRadius.r10,
+                                );
+                              }),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset("assets/icons/logout2.svg"),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  "تسجيل الخروج".tr(),
+                                  style: context.titleM.copyWith(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: AppFonts.caSi,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        )
+                      ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: 40,
                   )
-                ],
-              ),
-            );
+                : LoginWidget();
           },
         ));
   }
@@ -205,14 +245,15 @@ class AccountScreen extends StatelessWidget {
 class ContainerItemAccount extends StatelessWidget {
   final String image, title, value;
   final void Function() onTap;
+  final bool isPhone;
 
-  const ContainerItemAccount({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.value,
-    required this.onTap,
-  });
+  const ContainerItemAccount(
+      {super.key,
+      required this.image,
+      required this.title,
+      required this.value,
+      required this.onTap,
+      this.isPhone = false});
 
   @override
   Widget build(BuildContext context) {
@@ -239,21 +280,23 @@ class ContainerItemAccount extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        GestureDetector(
-          onTap: onTap,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Texts(
-                title: "تعديل",
-                family: AppFonts.caSi,
-                size: 12,
-                textColor: Color(0xffC3C3C3),
-              ),
-              SvgPicture.asset("assets/icons/edit2.svg")
-            ],
-          ),
-        )
+        isPhone
+            ? SizedBox()
+            : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Texts(
+                  title: "تعديل",
+                  family: AppFonts.caSi,
+                  size: 12,
+                  textColor: Colors.red,
+                ),
+                SvgPicture.asset(
+                  "assets/icons/edit2.svg",
+                  color: Colors.red,
+                )
+              ],
+            )
       ],
     );
   }

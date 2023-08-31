@@ -8,7 +8,8 @@ import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/widgets/empty_list_widget.dart';
 import 'package:hatlli/meduls/common/bloc/notification_cubit/notification_cubit.dart';
 import 'package:hatlli/meduls/common/models/notification_model.dart';
-import 'package:hatlli/meduls/user/ui/notifications_screen/details_notification_screen.dart';
+
+import 'package:hatlli/meduls/user/ui/order_details_screen/order_details_screen.dart';
 
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/palette.dart';
@@ -47,7 +48,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               //     onTap: () {
               //       scaffoldkey.currentState!.openDrawer();
               //     },
-                
+
               //     child: Padding(
               //         padding: const EdgeInsets.all(15),
               //         child: SvgPicture.asset(
@@ -55,8 +56,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               //           height: 17,
               //           width: 26,
               //         ))),
-              title: const Texts(
-                  title: "الاشعارات",
+              title:  Texts(
+                  title: "الاشعارات".tr(),
                   family: AppFonts.taB,
                   size: 18,
                   widget: FontWeight.bold),
@@ -66,7 +67,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             body: state.getAlertsState == RequestState.loaded
                 ? state.alertResponse!.alerts.isEmpty
-                    ? const EmptyListWidget(message: "لا توجد اشعارات ")
+                    ?  EmptyListWidget(message: "لا توجد اشعارات ".tr())
                     : ListView.builder(
                         padding: const EdgeInsets.only(
                             left: 16, right: 16, top: 50, bottom: 40),
@@ -75,11 +76,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           AlertResponse alertResponse = state.alertResponse!;
                           return GestureDetector(
                             onTap: () {
-                              pushPage(
-                                  context,
-                                  DetailsNotificationScreen(
-                                      notificationModel:
-                                          alertResponse.alerts[index]));
+                              NotificationCubit.get(context)
+                                  .viewAlert(alertResponse.alerts[index].id,
+                                      context: context)
+                                  .then((value) {
+                                pushPage(
+                                    context,
+                                    OrderDetailsScreen(
+                                        id: alertResponse
+                                            .alerts[index].pageId!));
+                              });
                             },
                             child: Container(
                               height: 65,
@@ -121,14 +127,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                     children: [
                                       Texts(
                                         title:
-                                            alertResponse.alerts[index].title!,
+                                          "طلب رقم : ".tr() + alertResponse.alerts[index].pageId.toString(),
                                         family: AppFonts.caR,
                                         size: 12,
                                         // textColor: const Color(0xffC3C3C3),
                                       ),
                                       Texts(
                                         title: alertResponse
-                                            .alerts[index].description!,
+                                            .alerts[index].description!.tr(),
                                         family: AppFonts.caR,
                                         size: 12,
                                         textColor: const Color(0xffC3C3C3),

@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:hatlli/core/enums/loading_status.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/layout/app_fonts.dart';
@@ -8,6 +10,7 @@ import 'package:hatlli/core/widgets/texts.dart';
 import 'package:hatlli/meduls/provider/bloc/provider_cubit/provider_cubit.dart';
 import 'package:hatlli/meduls/user/bloc/cart_cubit/cart_cubit.dart';
 import 'package:hatlli/meduls/user/bloc/favoraite_cubit/favoraite_cubit.dart';
+import '../../../../core/widgets/back_button.dart';
 import '../../../../core/widgets/circular_progress.dart';
 import '../components/app_bar_widget.dart';
 import 'components/details_provider_widget.dart';
@@ -28,8 +31,12 @@ class _DetailsProviderScreenState extends State<DetailsProviderScreen> {
     super.initState();
     ProviderCubit.get(context)
         .getProviderDetails(providerId: widget.providerId);
-    CartCubit.get(context).getCarts(isState: false);
-    FavoriteCubit.get(context).getFavorites();
+    ProviderCubit.get(context)
+        .getProductsByProviderId(page: 1, providerId: widget.providerId);
+    if (isLogin()) {
+      CartCubit.get(context).getCarts(isState: false);
+      FavoriteCubit.get(context).getFavorites();
+    }
   }
 
   @override
@@ -43,15 +50,8 @@ class _DetailsProviderScreenState extends State<DetailsProviderScreen> {
               children: [
                 //** app bar */
                 AppBarWidget(
-                  loading: GestureDetector(
-                      onTap: () {
-                        pop(context);
-                      },
-                      child: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.black,
-                      )),
-                  title: "تفاصيل المزود",
+                  loading: BackButtonWidget(),
+                  title: "تفاصيل المزود".tr(),
                 ),
                 const SizedBox(
                   height: 28,
@@ -62,7 +62,7 @@ class _DetailsProviderScreenState extends State<DetailsProviderScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TabContainerProvider(
-                      title: "المتجر",
+                      title: "المتجر".tr(),
                       textColor: state.indexDetailsProvider == 0
                           ? Palette.white
                           : const Color(0xffBBBBBB),
@@ -78,7 +78,7 @@ class _DetailsProviderScreenState extends State<DetailsProviderScreen> {
                       width: 10,
                     ),
                     TabContainerProvider(
-                      title: "بيانات المزود",
+                      title: "بيانات المزود".tr(),
                       textColor: state.indexDetailsProvider == 1
                           ? Palette.white
                           : const Color(0xffBBBBBB),
@@ -93,7 +93,7 @@ class _DetailsProviderScreenState extends State<DetailsProviderScreen> {
                   ],
                 ),
                 const SizedBox(
-                  height: 45,
+                  height: 35,
                 ),
                 Expanded(
                   child: state.getDetailsProviderState == RequestState.loaded
@@ -120,6 +120,7 @@ class _DetailsProviderScreenState extends State<DetailsProviderScreen> {
             ),
           );
         },
+       
       ),
     );
   }
@@ -129,21 +130,23 @@ class TabContainerProvider extends StatelessWidget {
   final String title;
   final Color textColor, backgroundColor;
   final void Function() onTap;
-  final double width;
+  final double width, fonSize, height;
   const TabContainerProvider(
       {super.key,
       required this.title,
       required this.textColor,
       required this.backgroundColor,
       required this.onTap,
-      this.width = 100});
+      this.width = 100,
+      this.fonSize = 12,
+      this.height = 30});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 30,
+        height: height,
         width: width,
         decoration: BoxDecoration(
             border: Border.all(width: .8, color: textColor),
@@ -153,7 +156,7 @@ class TabContainerProvider extends StatelessWidget {
             child: Texts(
           title: title,
           family: AppFonts.taM,
-          size: 12,
+          size: fonSize,
           textColor: textColor,
         )),
       ),

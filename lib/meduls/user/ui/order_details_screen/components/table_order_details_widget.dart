@@ -1,10 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hatlli/meduls/common/models/order_response.dart';
-
 import '../../../../../core/layout/app_fonts.dart';
-import '../../../../../core/utils/app_model.dart';
 import '../../../../../core/widgets/texts.dart';
 
 class TableOrderDetailsWidget extends StatelessWidget {
@@ -22,10 +20,10 @@ class TableOrderDetailsWidget extends StatelessWidget {
           headingRowHeight: 45,
           horizontalMargin: 0,
           columnSpacing: 10,
-          columns: const [
+          columns:  [
             DataColumn(
               label: Texts(
-                title: "الصنف",
+                title: "الصنف".tr(),
                 family: AppFonts.taB,
                 size: 12,
                 textColor: Color(0xff343434),
@@ -33,24 +31,24 @@ class TableOrderDetailsWidget extends StatelessWidget {
             ),
             DataColumn(
                 label: Texts(
-              title: "الكمية",
+              title: "الكمية".tr(),
               family: AppFonts.taB,
               size: 12,
               textColor: Color(0xff343434),
             )),
             DataColumn(
                 label: Texts(
-                    title: "السعر",
+                    title: "السعر".tr(),
                     family: AppFonts.taB,
                     size: 12,
                     textColor: Color(0xff343434))),
             DataColumn(
                 label: Texts(
-                    title: "اجمالي",
+                    title: "اجمالي".tr(),
                     family: AppFonts.taB,
                     size: 12,
                     textColor: Color(0xff343434))),
-            DataColumn(label: SizedBox()),
+            // DataColumn(label: SizedBox()),
           ],
           rows: list.map((e) =>
              DataRow(cells: [
@@ -65,25 +63,27 @@ class TableOrderDetailsWidget extends StatelessWidget {
                   size: 13,
                   textColor: Color(0xff343434))),
                DataCell(Texts(
-                  title: e.product!.price.toString(),
+                  title: "${e.product!.price.toString()} SAR",
                   family: AppFonts.taM,
                   size: 13,
                   textColor: Color(0xff343434))),
                DataCell(Texts(
-                  title: e.order!.cost.toString(),
+                  title: "${e.order!.cost.toString()} SAR",
                   family: AppFonts.taM,
                   size: 13,
                   textColor: Color(0xff343434))),
-              DataCell(
-              currentUser.role==  AppModel.userRole?  Row(
-                children: [
-                  SvgPicture.asset("assets/icons/edit.svg"),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  SvgPicture.asset("assets/icons/delete.svg")
-                ],
-              ):const SizedBox()),
+              // DataCell(
+              // currentUser.role==  AppModel.userRole?  Row(
+              //   children: [
+              //     SvgPicture.asset("assets/icons/edit.svg"),
+              //     const SizedBox(
+              //       width: 4,
+              //     ),
+              //     SvgPicture.asset("assets/icons/delete.svg")
+              //   ],
+              // ):const SizedBox()),
+           
+           
             ])
          
           

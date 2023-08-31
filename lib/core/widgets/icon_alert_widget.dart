@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:badges/badges.dart' as badges;
-import 'package:hatlli/core/helpers/helper_functions.dart';
+import 'package:hatlli/core/animations/slide_transtion.dart';
+
 import 'package:hatlli/core/utils/app_model.dart';
 import '../../meduls/common/bloc/home_cubit/home_cubit.dart';
 import '../../meduls/user/ui/notifications_screen/notifications_screen.dart';
@@ -11,20 +12,23 @@ import '../layout/palette.dart';
 
 class IconAlertWidget extends StatelessWidget {
   final double t, l;
-   IconAlertWidget(
-   {this.t=15,this.l=20}
-  );
+  IconAlertWidget({this.t = 10, this.l = 20});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        return GestureDetector(
-          onTap: () {
-            pushPage(context, const NotificationsScreen());
+        return MaterialButton(
+          onPressed: () {
+            // pushPage(context, const NotificationsScreen());
+            pushTranslationPage(
+                context: context,
+                transtion: FadTransition(page: NotificationsScreen()));
           },
+          minWidth: 40,
+          height: 40,
           child: Padding(
-            padding:  EdgeInsets.only(top: t, left: l),
+            padding: EdgeInsets.only(top: t, left: l),
             child: badges.Badge(
               badgeContent: Text(
                 currentUser.role == AppModel.userRole

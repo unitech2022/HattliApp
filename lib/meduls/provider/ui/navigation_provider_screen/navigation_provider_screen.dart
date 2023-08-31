@@ -1,9 +1,16 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
+import 'package:hatlli/core/helpers/Notification_controller.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
+import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/widgets/custom_button.dart';
+import 'package:hatlli/core/widgets/texts.dart';
 
 import 'package:hatlli/meduls/provider/ui/add_product_screen/add_product_screen.dart';
 import 'package:hatlli/meduls/provider/ui/create_account_provider_screen/create_account_provider_screen.dart';
@@ -30,16 +37,28 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
   @override
   void initState() {
     super.initState();
+    getFCMToken();
     HomeCubit.get(context).getHomeProvider(context: context);
-    //  NotificationCubit.get(context).getAlerts(context: context);
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      pushPageRoutName(context, notyUser);
+    });
+
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        return state.getHomeProviderState == RequestState.loaded
-            ? state.homeResponseProvider!.provider == null
+        switch (state.getHomeProviderState) {
+          case RequestState.noInternet:
+            return NoInternetWidget(
+              onPress: () {
+                 HomeCubit.get(context).getHomeProvider(context: context);
+              },
+            );
+          case RequestState.loaded:
+            return state.homeResponseProvider!.provider == null
                 ? Scaffold(
                     body: Padding(
                       padding: const EdgeInsets.all(20),
@@ -48,7 +67,7 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomButton(
-                                title: "انشاء متجرى",
+                                title: "انشاء متجرى".tr(),
                                 onPressed: () {
                                   pushPage(context,
                                       const CreateAccountProviderScreen());
@@ -60,8 +79,8 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                                 onPressed: () {
                                   signOut(ctx: context);
                                 },
-                                child: const Text(
-                                  "تسجيل خروج",
+                                child: Text(
+                                  "تسجيل خروج".tr(),
                                   style: TextStyle(
                                       fontFamily: AppFonts.caB,
                                       color: Colors.red),
@@ -80,7 +99,7 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                         countNoty:
                             state.homeResponseProvider!.notiyCount.toString(),
                         context: context,
-                        title: setTitleAppBar(state.currentNavIndex)),
+                        title: setTitleAppBar(state.currentNavIndex).tr()),
                     floatingActionButton: state.currentNavIndex == 3
                         ? const SizedBox()
                         : GestureDetector(
@@ -138,28 +157,28 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                                       ? Palette.mainColor
                                       : const Color(0xffADADAD),
                                 ),
-                                label: "الرئيسية"),
+                                label: "الرئيسية".tr()),
                             BottomNavigationBarItem(
                                 icon: SvgPicture.asset(
                                     "assets/icons/orders.svg",
                                     color: state.currentNavIndex == 1
                                         ? Palette.mainColor
                                         : const Color(0xffADADAD)),
-                                label: "طلباتي"),
+                                label: "طلباتي".tr()),
                             BottomNavigationBarItem(
                                 icon: SvgPicture.asset(
                                     "assets/icons/providers.svg",
                                     color: state.currentNavIndex == 2
                                         ? Palette.mainColor
                                         : const Color(0xffADADAD)),
-                                label: "المنتجات"),
+                                label: "المنتجات".tr()),
                             BottomNavigationBarItem(
                                 icon: SvgPicture.asset(
                                     "assets/icons/account.svg",
                                     color: state.currentNavIndex == 3
                                         ? Palette.mainColor
                                         : const Color(0xffADADAD)),
-                                label: "حسابي"),
+                                label: "حسابي".tr()),
                           ]),
                     ),
                     body: RefreshIndicator(
@@ -172,14 +191,26 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                         children: screensProvider,
                       ),
                     ),
-                  )
-            : const Scaffold(
-                body: CustomCircularProgress(
-                  fullScreen: true,
-                  strokeWidth: 4,
-                  size: Size(50, 50),
-                ),
-              );
+                  );
+
+          case RequestState.error:
+          case RequestState.loading:
+            return const Scaffold(
+              body: CustomCircularProgress(
+                fullScreen: true,
+                strokeWidth: 4,
+                size: Size(50, 50),
+              ),
+            );
+          default:
+            return const Scaffold(
+              body: CustomCircularProgress(
+                fullScreen: true,
+                strokeWidth: 4,
+                size: Size(50, 50),
+              ),
+            );
+        }
       },
     );
   }
@@ -196,5 +227,86 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
       default:
         return "حسابي";
     }
+  }
+
+  void getFCMToken() async {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      // NotifyAowsome(notification!.title!,notification.body!);
+      if (notification != null && android != null && !kIsWeb) {
+        print("tokrrrrrrnseneeeeee");
+        HomeCubit.get(context)
+            .getHomeProvider(context: context, isState: false);
+
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+          id: createUniqueId(),
+
+          color: Colors.blue,
+
+          channelKey: 'hattli',
+          title: notification.title,
+          body: notification.body,
+
+          // notificationLayout: NotificationLayout.BigPicture,
+          // largeIcon: "asset://assets/images/logo_final.png"
+        ));
+        AwesomeNotifications().setListeners(
+            onActionReceivedMethod:
+                NotificationController.onActionReceivedMethod,
+            onNotificationCreatedMethod:
+                NotificationController.onNotificationCreatedMethod,
+            onNotificationDisplayedMethod:
+                NotificationController.onNotificationDisplayedMethod,
+            onDismissActionReceivedMethod:
+                NotificationController.onDismissActionReceivedMethod);
+        // print("aaaaaaaaaaaawww${message.data["desc"]}");
+      }
+    });
+  }
+}
+
+class NoInternetWidget extends StatelessWidget {
+  final void Function() onPress;
+  const NoInternetWidget({
+    super.key,
+    required this.onPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Texts(
+              title: "لا يوجد اتصال بالانترنت".tr(),
+              family: AppFonts.taB,
+              size: 20,
+              textColor: Colors.black,
+              widget: FontWeight.w700),
+          SizedBox(
+            height: 20,
+          ),
+          Icon(
+            Icons.signal_wifi_statusbar_connected_no_internet_4,
+            size: 80,
+            color: Colors.grey,
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          CustomButton(
+            title: "اعادة المحاولة".tr(),
+            onPressed: onPress,
+            backgroundColor: Colors.red,
+          )
+        ],
+      ),
+    ));
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hatlli/core/router/routes.dart';
@@ -16,6 +18,8 @@ import '../../../../core/utils/api_constatns.dart';
 import '../../../../core/utils/app_model.dart';
 import '../../models/order_response.dart';
 import '../../models/polyine_response.dart';
+import 'dart:ui' as ui;
+
 part 'order_state.dart';
 
 class OrderCubit extends Cubit<OrderState> {
@@ -26,8 +30,12 @@ class OrderCubit extends Cubit<OrderState> {
     emit(state.copyWith(currentIndexTap: newIndex));
   }
 
+  changePayMentMethod(int payment) {
+    emit(state.copyWith(payment: payment));
+  }
+
 // ** add order
-  Future addOrder(int payment, {context}) async {
+  Future addOrder(int payment, {context,nots}) async {
     showUpdatesLoading(context);
     emit(state.copyWith(addOrderState: RequestState.loading));
     var headers = {'Authorization': token};
@@ -37,7 +45,8 @@ class OrderCubit extends Cubit<OrderState> {
     request.fields.addAll({
       // 'providerId': '4',
       'UserId': currentUser.id!,
-      'payment': payment.toString()
+      'payment': payment.toString(),
+      'nots':nots
     });
 
     request.headers.addAll(headers);
@@ -50,8 +59,16 @@ class OrderCubit extends Cubit<OrderState> {
       pop(context);
       CartCubit.get(context).cartsFound.clear();
       pushPageRoutName(context, navUser);
-      showDialogSuccess(context: context, message: "تم ارسال الطلب بنجاح");
-
+      showDialogSuccess(context: context, message: "تم ارسال الطلب بنجاح".tr());
+      if (payment == 1) {
+        showTopMessage(
+            context: context,
+            customBar: CustomSnackBar.success(
+                backgroundColor: Colors.green,
+                message: "تمت عملية الدفع بنجاح".tr(),
+                textStyle: TextStyle(
+                    fontFamily: "font", fontSize: 16, color: Colors.white)));
+      }
       emit(state.copyWith(addOrderState: RequestState.loaded));
       // await getCarts(isState: false);
     } else {
@@ -94,7 +111,7 @@ class OrderCubit extends Cubit<OrderState> {
           context: context,
           customBar: CustomSnackBar.success(
             backgroundColor: Colors.green,
-            message: textOrderStatus[status],
+            message: textOrderStatus[status].tr(),
             textStyle: const TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
@@ -137,11 +154,20 @@ class OrderCubit extends Cubit<OrderState> {
   PolylineResponse polylineResponse = PolylineResponse();
 
   Set<Polyline> polylinePoints = {};
-  void drawPolyline({lat, lng}) async {
-    var response = await http.post(Uri.parse(
-        "https://maps.googleapis.com/maps/api/directions/json?key=${AppModel.apiKey}&units=metric&origin=${locData.latitude},${locData.longitude}&destination=$lat,$lng&mode=driving"));
+  List<Marker> listMarker = const [];
 
-    print(response.body);
+  Future drawPolyline({lat, lng, context, isState = true}) async {
+     Uint8List markerIconMuLocation =
+        await getBytesFromAsset('assets/images/marker.png', 120);
+
+         Uint8List markerIconUser =
+        await getBytesFromAsset('assets/images/mylocation.png', 120);
+    polylinePoints.clear();
+    if (isState) showUpdatesLoading(context);
+
+    emit(state.copyWith(getlinsMapState: RequestState.loading));
+    var response = await http.post(Uri.parse(
+        "https://maps.googleapis.com/maps/api/directions/json?key=${AppModel.apiKey}&units=metric&origin=${locData.latitude.toString()},${locData.longitude.toString()}&destination=${lat.toString()},${lng.toString()}&mode=driving"));
 
     polylineResponse = PolylineResponse.fromJson(jsonDecode(response.body));
 
@@ -166,8 +192,41 @@ class OrderCubit extends Cubit<OrderState> {
                 polylineResponse
                     .routes![0].legs![0].steps![i].endLocation!.lng!),
           ],
-          width: 3,
-          color: Colors.red));
+          width: 5,
+          color: Colors.black));
     }
+    listMarker = [
+      Marker(
+          markerId: MarkerId('1'),
+          position: LatLng(locData.latitude!, locData.longitude!),
+          icon: BitmapDescriptor.fromBytes(markerIconUser),
+
+          infoWindow: InfoWindow(
+            title: "موقعى".tr(),
+          )),
+      Marker(
+          markerId: MarkerId('2'),
+          position: LatLng(lat, lng),
+          icon: BitmapDescriptor.fromBytes(markerIconMuLocation),
+          infoWindow: InfoWindow(
+            title:"",
+          )),
+    ];
+
+    if (isState) pop(context);
+
+    emit(state.copyWith(getlinsMapState: RequestState.loaded));
   }
+
+  //** format image marker */
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
 }

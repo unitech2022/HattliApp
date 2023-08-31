@@ -1,8 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hatlli/core/layout/palette.dart';
 import 'package:hatlli/core/utils/app_model.dart';
-
 import '../../../../../core/layout/app_fonts.dart';
 import '../../../../../core/widgets/texts.dart';
 
@@ -24,19 +23,19 @@ class DetailsOrderWidget extends StatelessWidget {
       child: Column(
         children: [
           ContainerDetails(
-            title: "اجمالي",
+            title: "اجمالي".tr(),
             value: total.toString(),
           ),
-          const ContainerDetails(
-            title: "الضريبة",
-            value: "3%",
+           ContainerDetails(
+            title: "قيمة التوصيل".tr(),
+            value: " 2 " + "ريال".tr(),
           ),
-          const ContainerDetails(
-            title: "خصم",
-            value: "3%",
+           ContainerDetails(
+            title: "خصم".tr(),
+            value: "0",
           ),
           ContainerDetails(
-            title: "اجمالي بعد الخصم",
+            title: "اجمالي بعد الخصم".tr(),
             value: total.toString(),
           ),
           type == 1
@@ -47,8 +46,8 @@ class DetailsOrderWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Texts(
-                          title: "حالة الطلب  : ",
+                       Texts(
+                          title: "حالة الطلب  : ".tr(),
                           family: AppFonts.taB,
                           size: 12),
                       Row(
@@ -58,7 +57,7 @@ class DetailsOrderWidget extends StatelessWidget {
                             height: 12,
                             width: 12,
                             decoration:  BoxDecoration(
-                              color:status==4?Colors.red: Color(0xffffa827),
+                              color:orderStatusColors[status],
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -66,10 +65,10 @@ class DetailsOrderWidget extends StatelessWidget {
                             width: 16,
                           ),
                            Texts(
-                            title: orderStatus[status],
+                            title: orderStatus[status].tr(),
                             family: AppFonts.taM,
                             size: 12,
-                            textColor:status==4?Colors.red: Palette.mainColor,
+                            textColor:orderStatusColors[status],
                           ),
                         ],
                       )

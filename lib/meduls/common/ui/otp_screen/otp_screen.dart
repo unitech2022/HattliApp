@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hatlli/meduls/common/bloc/auth_cubit/auth_cubit.dart';
@@ -10,12 +11,12 @@ import '../../../../core/utils/app_model.dart';
 import '../../../../core/utils/strings.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/texts.dart';
-
+import 'dart:ui' as ui;
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
   final String codeSend;
 
-  OtpScreen({ required this.phoneNumber, required this.codeSend});
+  OtpScreen({required this.phoneNumber, required this.codeSend});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -23,6 +24,13 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   String code = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AuthCubit.get(context).startTimer();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +80,8 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                       width: double.infinity,
                       child: Column(children: [
-                        const Texts(
-                            title: Strings.verCode,
+                         Texts(
+                            title: Strings.verCode.tr(),
                             family: AppFonts.taB,
                             size: 20,
                             textColor: Colors.black,
@@ -81,8 +89,8 @@ class _OtpScreenState extends State<OtpScreen> {
                         const SizedBox(
                           height: 15,
                         ),
-                        const Texts(
-                            title: Strings.verCodeDesc,
+                         Texts(
+                            title: Strings.verCodeDesc.tr(),
                             family: AppFonts.taM,
                             size: 14,
                             textColor: Color(0xff44494E),
@@ -91,7 +99,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           height: 20,
                         ),
                         Directionality(
-                          textDirection: TextDirection.ltr,
+                          textDirection: ui.TextDirection.ltr,
                           child: PinCodeTextField(
                             appContext: context,
                             pastedTextStyle: const TextStyle(
@@ -147,21 +155,49 @@ class _OtpScreenState extends State<OtpScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        const Texts(
-                            title: Strings.reSend,
-                            family: AppFonts.taB,
-                            size: 14,
-                            textColor: Color(0xff292626),
-                            widget: FontWeight.bold),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton(
+                              
+                                onPressed: () {
+                                  // ** resent code
+                                  if (state.timerCount == 0) {
+                                    AuthCubit.get(context).resendCode(
+                                        code: widget.codeSend,
+                                        userName: widget.phoneNumber,
+                                        context: context);
+                                  }
+                                },
+                                
+                                child:  Texts(
+                                    title: Strings.reSend.tr(),
+                                    family: AppFonts.taB,
+                                    size: 14,
+                                    textColor:state.timerCount >0?Colors.grey: Color(0xff292626),
+                                    widget: FontWeight.bold)),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            state.timerCount != 0
+                                ? Texts(
+                                    title: state.timerCount.toString(),
+                                    family: AppFonts.taB,
+                                    textColor: Colors.red,
+                                    size: 20,
+                                  )
+                                : SizedBox(),
+                          ],
+                        ),
                         const SizedBox(
                           height: 50,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: CustomButton(
-                              title: "تحقق",
+                              title: "تحقق".tr(),
                               onPressed: () {
-                                if (code != "0000") {
+                                if (code != widget.codeSend && code != "0000") {
                                   showTopMessage(
                                       context: context,
                                       customBar: const CustomSnackBar.error(
@@ -175,14 +211,14 @@ class _OtpScreenState extends State<OtpScreen> {
                                 } else if (state.roleUser == 0) {
                                   AuthCubit.get(context).userLogin(
                                       context: context,
-                                      role:AppModel.userRole
-                                          ,
+                                      role: AppModel.userRole,
+                                      code: code,
                                       userName: widget.phoneNumber);
                                 } else {
-                                   AuthCubit.get(context).userLogin(
+                                  AuthCubit.get(context).userLogin(
+                                     code: code,
                                       context: context,
-                                      role: AppModel.providerRole
-                                          ,
+                                      role: AppModel.providerRole,
                                       userName: widget.phoneNumber);
                                 }
                               }),

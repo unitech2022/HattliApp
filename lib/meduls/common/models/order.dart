@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 
 import 'address_model.dart';
@@ -19,8 +20,8 @@ class OrderResponse extends Equatable {
         address: json['address'] != null
             ? AddressModel.fromJson(json['address'])
             : AddressModel(),
-        name: json['name'] ?? "غير معروف",
-        imageUrl: json['imageUrl'] ?? "غير معروف",
+        name: json['name'] ==null ?"غير معروف".tr(): json['name'],
+        imageUrl: json['imageUrl'] == null ? "غير معروف".tr():json['imageUrl'],
       );
 
   @override
