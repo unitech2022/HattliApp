@@ -6,7 +6,7 @@ class UserDetailsPref{
    String? id;
 
    String? role;
- 
+ int? status;
    String? deviceToken;
 
    UserDetailsPref(
@@ -15,5 +15,6 @@ class UserDetailsPref{
       this.userName,
       this.deviceToken,
       this.role,
+      this.status
    });
 }

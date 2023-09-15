@@ -22,6 +22,7 @@ import 'package:hatlli/meduls/common/ui/payment/payment.dart';
 import 'package:hatlli/meduls/user/bloc/cart_cubit/cart_cubit.dart';
 import 'package:hatlli/meduls/user/models/rate_response.dart';
 import 'package:hatlli/meduls/user/ui/product_details_screen/show_image_screen/show_image_screen.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/app_radius.dart';
@@ -222,7 +223,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           orderId: 0,
                                           cost: 0,
                                           createdAt: "createdAt");
-                                      CartCubit.get(context).addCart(cartModel);
+                                      CartCubit.get(context)
+                                          .addCart(cartModel, context: context);
                                     }
                                   } else {
                                     showDialogLogin(context: context);
@@ -292,19 +294,34 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (isLogin()) {
-                                    pushPage(
-                                        context,
-                                        PaymentMethodsConfirmed(
-                                          note: "not",
-                                          total:
-                                              (widget.product.price * quantity)
-                                                      .toInt() *
-                                                  100,
-                                          productId: widget.product.id,
-                                          providerId: widget.product.providerId,
-                                          type: 1,
-                                          quntity: quantity,
-                                        ));
+                                    if (currentUser.status == 1) {
+                                      showTopMessage(
+                                          context: context,
+                                          customBar: CustomSnackBar.error(
+                                              backgroundColor: Colors.red,
+                                              message:
+                                                  "هذا الرقم محظور تواصل مع خدمة العملاء"
+                                                      .tr(),
+                                              textStyle: TextStyle(
+                                                  fontFamily: "font",
+                                                  fontSize: 16,
+                                                  color: Colors.white)));
+                                    } else {
+                                      pushPage(
+                                          context,
+                                          PaymentMethodsConfirmed(
+                                            note: "not",
+                                            total: (widget.product.price *
+                                                        quantity)
+                                                    .toInt() *
+                                                100,
+                                            productId: widget.product.id,
+                                            providerId:
+                                                widget.product.providerId,
+                                            type: 1,
+                                            quntity: quantity,
+                                          ));
+                                    }
                                   } else {
                                     showDialogLogin(context: context);
                                   }
@@ -521,7 +538,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                             Texts(
+                            Texts(
                                 title: "حدد الكمية".tr(),
                                 family: AppFonts.taB,
                                 size: 14),
@@ -715,7 +732,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           .copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
                         tilePadding: EdgeInsets.zero,
-                        title:  Texts(
+                        title: Texts(
                             title: "مزيد من التفاصيل".tr(),
                             family: AppFonts.taB,
                             size: 14),
@@ -757,7 +774,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                         Texts(
+                                        Texts(
                                             title: "اللون".tr(),
                                             family: AppFonts.caR,
                                             textColor: Color(0xff707070),
@@ -785,7 +802,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                         Texts(
+                                        Texts(
                                             title: "المقاسات المتوفرة".tr(),
                                             family: AppFonts.caR,
                                             textColor: Color(0xff707070),
@@ -810,7 +827,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                   Texts(
+                                  Texts(
                                       title: "رمز المنتج".tr(),
                                       family: AppFonts.caR,
                                       textColor: Color(0xff707070),
@@ -835,7 +852,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                   Texts(
+                                  Texts(
                                       title: "التصنيفات".tr(),
                                       family: AppFonts.caR,
                                       textColor: Color(0xff707070),

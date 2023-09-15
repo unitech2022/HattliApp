@@ -11,13 +11,14 @@ class StatistState extends Equatable {
   // ** my  wallet
   final RequestState? balanceWithdrawal;
   final bool isAllMony;
-
+  final RequestState? changeDateState;
   final int currentIndexTap;
 
   const StatistState({
     this.getReviewsProviderState,
     this.getAllOrdersState,
     this.allOrders,
+    this.changeDateState,
     this.typeStatistTime = 0,
     this.endDateStatist,
     this.startDateStatist,
@@ -31,7 +32,8 @@ class StatistState extends Equatable {
     final RequestState? getReviewsProviderState,
     final int? typeStatistTime,
     final RequestState? getAllOrdersState,
-     final ResponseTotalOrder? allOrders,
+    final RequestState? changeDateState,
+    final ResponseTotalOrder? allOrders,
     final String? startDateStatist,
     final String? endDateStatist,
     final ReviewModel? reviewModel,
@@ -41,7 +43,8 @@ class StatistState extends Equatable {
   }) =>
       StatistState(
         currentIndexTap: currentIndexTap ?? this.currentIndexTap,
-         allOrders: allOrders ?? this.allOrders,
+        allOrders: allOrders ?? this.allOrders,
+        changeDateState: changeDateState ?? this.changeDateState,
         getAllOrdersState: getAllOrdersState ?? this.getAllOrdersState,
         getReviewsProviderState:
             getReviewsProviderState ?? this.getReviewsProviderState,
@@ -63,6 +66,7 @@ class StatistState extends Equatable {
         allOrders,
         balanceWithdrawal,
         currentIndexTap,
-        getAllOrdersState
+        getAllOrdersState,
+        changeDateState
       ];
 }

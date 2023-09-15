@@ -2,10 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hatlli/core/enums/loading_status.dart';
 
 import 'package:hatlli/core/extension/theme_extension.dart';
 import 'package:hatlli/core/layout/palette.dart';
 import 'package:hatlli/core/layout/screen_size.dart';
+import 'package:hatlli/meduls/common/bloc/auth_cubit/auth_cubit.dart';
 import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
 import 'package:hatlli/meduls/user/ui/account_screen/update_profile_screen.dart';
 import 'package:hatlli/meduls/user/ui/components/login_widget.dart';
@@ -14,6 +16,7 @@ import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/app_radius.dart';
 
 import '../../../../core/utils/api_constatns.dart';
+import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/texts.dart';
 import '../home_user_screen/home_user_screen.dart';
 
@@ -38,16 +41,16 @@ class _AccountScreenState extends State<AccountScreen> {
                     padding: const EdgeInsets.only(
                       left: 22,
                       right: 22,
-                      top:100,
+                      top: 100,
                     ),
                     child: Column(
                       children: [
                         MaterialButton(
                           onPressed: () {
                             pushPage(
-                                    context,
-                                    UpdateProfileScreen(
-                                        user: state.userModel!, type: 1));
+                                context,
+                                UpdateProfileScreen(
+                                    user: state.userModel!, type: 1));
                           },
                           child: Row(
                             children: [
@@ -58,7 +61,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   const SizedBox(
                                     width: 18,
                                   ),
-                                   Texts(
+                                  Texts(
                                       title: "تعديل البيانات".tr(),
                                       family: AppFonts.taM,
                                       size: 12)
@@ -67,8 +70,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             ],
                           ),
                         ),
-                       
-                     
+
                         Container(
                           padding: const EdgeInsets.all(30),
                           // decoration: BoxDecoration(
@@ -85,25 +87,24 @@ class _AccountScreenState extends State<AccountScreen> {
                           // ),
                           child:
                               Column(mainAxisSize: MainAxisSize.min, children: [
-
-                                   Container(
-                          padding: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: Palette.mainColor, width: 2)),
-                          child: CircleImageNetwork(
-                            imageError: "assets/images/person.png",
-                            image: ApiConstants.imageUrl(
-                                state.homeUserResponse!.user!.profileImage),
-                            height: 76,
-                            width: 76,
-                            colorBackground: Palette.mainColor,
-                          ),
-                        ),
-                          SizedBox(
-                          height: 45,
-                        ),
+                            Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: Palette.mainColor, width: 2)),
+                              child: CircleImageNetwork(
+                                imageError: "assets/images/person.png",
+                                image: ApiConstants.imageUrl(
+                                    state.homeUserResponse!.user!.profileImage),
+                                height: 76,
+                                width: 76,
+                                colorBackground: Palette.mainColor,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 45,
+                            ),
                             ContainerItemAccount(
                               onTap: () {
                                 // pushPage(
@@ -113,7 +114,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 //         type: 0));
                               },
                               title: "الأسم  : ".tr(),
-                               isPhone: true,
+                              isPhone: true,
                               value: state.userModel!.fullName,
                               image: "assets/icons/account2.svg",
                             ),
@@ -131,9 +132,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               height: 20,
                             ),
                             ContainerItemAccount(
-                              onTap: () {
-                                
-                              },
+                              onTap: () {},
                               title: "المدينة  : ".tr(),
                               value: state.userModel!.city,
                               isPhone: true,
@@ -191,6 +190,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                           ),
                         ),
+
                         const SizedBox(
                           height: 40,
                         )
@@ -240,6 +240,8 @@ class _AccountScreenState extends State<AccountScreen> {
           );
         });
   }
+
+
 }
 
 class ContainerItemAccount extends StatelessWidget {
@@ -283,20 +285,20 @@ class ContainerItemAccount extends StatelessWidget {
         isPhone
             ? SizedBox()
             : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Texts(
-                  title: "تعديل",
-                  family: AppFonts.caSi,
-                  size: 12,
-                  textColor: Colors.red,
-                ),
-                SvgPicture.asset(
-                  "assets/icons/edit2.svg",
-                  color: Colors.red,
-                )
-              ],
-            )
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Texts(
+                    title: "تعديل",
+                    family: AppFonts.caSi,
+                    size: 12,
+                    textColor: Colors.red,
+                  ),
+                  SvgPicture.asset(
+                    "assets/icons/edit2.svg",
+                    color: Colors.red,
+                  )
+                ],
+              )
       ],
     );
   }

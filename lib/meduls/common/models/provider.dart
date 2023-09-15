@@ -11,15 +11,17 @@ class Provider extends Equatable {
   final String imagePassport;
   final String nameAdministratorCompany;
   final String addressName;
-    final String nameBunk;
+  final String nameBunk;
   final String iBan;
+  final String password;
   final double lat;
   final double lng;
   final double rate;
   final int status;
+  final bool manualOrder;
   final double discount;
   final double distance;
-   final double area;
+  final double area;
   final double wallet;
   final String createdAt;
 
@@ -28,9 +30,11 @@ class Provider extends Equatable {
       required this.categoryId,
       required this.title,
       required this.email,
-          required this.nameBunk,
+      required this.nameBunk,
       required this.iBan,
+      required this.manualOrder,
       required this.userId,
+      required this.password,
       required this.about,
       required this.logoCompany,
       required this.imagePassport,
@@ -43,7 +47,7 @@ class Provider extends Equatable {
       required this.discount,
       required this.distance,
       required this.wallet,
-       required this.area,
+      required this.area,
       required this.createdAt});
 
   factory Provider.fromJson(Map<String, dynamic> json) => Provider(
@@ -55,10 +59,9 @@ class Provider extends Equatable {
         about: json['about'],
         logoCompany: json['logoCompany'],
         imagePassport: json['imagePassport'],
-
-          nameBunk: json['nameBunk'],
-
-          
+        nameBunk: json['nameBunk'],
+        password: json['password'] ?? "",
+        manualOrder: json['manualOrder'] ?? false,
         iBan: json['iBan'],
         nameAdministratorCompany: json['nameAdministratorCompany'],
         addressName: json['addressName'],
@@ -69,7 +72,7 @@ class Provider extends Equatable {
         discount: json['discount'].toDouble(),
         distance: json['distance'].toDouble(),
         wallet: json['wallet'].toDouble(),
-         area: json['area'].toDouble(),
+        area: json['area'].toDouble(),
         createdAt: json['createdAt'],
       );
 
@@ -90,10 +93,12 @@ class Provider extends Equatable {
         lng,
         rate,
         status,
+        password,
         discount,
         distance,
         wallet,
         createdAt,
-        iBan,nameBunk
+        iBan,
+        nameBunk
       ];
 }

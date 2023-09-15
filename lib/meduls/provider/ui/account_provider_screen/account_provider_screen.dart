@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hatlli/core/extension/theme_extension.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/layout/app_fonts.dart';
+import 'package:hatlli/core/layout/app_radius.dart';
+import 'package:hatlli/core/layout/screen_size.dart';
 import 'package:hatlli/core/utils/api_constatns.dart';
 import 'package:hatlli/core/widgets/texts.dart';
 import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
@@ -307,6 +310,56 @@ class _AccountProviderScreenState extends State<AccountProviderScreen> {
                   //   padding: const EdgeInsets.symmetric(horizontal: 10),
                   //   child: CustomButton(title: Strings.next, onPressed: () {}),
                   // ),
+                      Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 15),
+                          width: context.wSize,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              signOut(ctx: context);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                // onPressed == null ? Palette.kGreyColor : Palette.mainColor,
+                                const Color(0xffD13A3A),
+                              ),
+                              elevation: MaterialStateProperty.all(12),
+                              shape:
+                                  MaterialStateProperty.resolveWith((states) {
+                                if (!states.contains(MaterialState.pressed)) {
+                                  return const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    side: BorderSide.none,
+                                  );
+                                }
+                                return const RoundedRectangleBorder(
+                                  borderRadius: AppRadius.r10,
+                                );
+                              }),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset("assets/icons/delete.svg",color: Colors.white,width: 25,height: 25,),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                 "حذف الحساب".tr(),
+                                  style: context.titleM.copyWith(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: AppFonts.caSi,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      
                   const SizedBox(
                     height: 20,
                   ),

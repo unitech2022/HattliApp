@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
+
 import 'package:hatlli/core/utils/api_constatns.dart';
 import 'package:hatlli/core/utils/app_model.dart';
 import 'package:hatlli/core/widgets/circular_progress.dart';
@@ -37,12 +38,20 @@ class _CreateAccountProviderScreenState
   final _controllerAdminName = TextEditingController();
   final _controllerNameCompany = TextEditingController();
   final _controllerEmail = TextEditingController();
+  final _controllerPassword = TextEditingController();
   final _controllerDesc = TextEditingController();
 
   final _controllerNameBank = TextEditingController();
   final _controllerIBanBank = TextEditingController();
 
   String? currenValue;
+
+  @override
+  void initState() {
+    super.initState();
+    ProviderCubit.get(context).emptyData();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -54,6 +63,7 @@ class _CreateAccountProviderScreenState
 
     _controllerNameBank.dispose();
     _controllerIBanBank.dispose();
+    _controllerPassword.dispose();
   }
 
   @override
@@ -125,12 +135,31 @@ class _CreateAccountProviderScreenState
                         controller: _controllerEmail,
                         hint: "إيميل الشركة".tr(),
                         icon: const SizedBox(),
+                        type: TextInputType.emailAddress,
+                      ),
+
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFieldWidget(
+                        controller: _controllerPassword,
+                        isPhone: true,
+                        display: state.isDisplay,
+                        hint: "الرقم السرى".tr(),
+                        icon: InkWell(
+                            onTap: () {
+                              bool display = !state.isDisplay;
+                              ProviderCubit.get(context).viewPassword(display);
+                            },
+                            child: state.isDisplay
+                                ? Icon(Icons.visibility_off)
+                                : Icon(Icons.visibility)),
                         type: TextInputType.text,
                       ),
                       const SizedBox(
                         height: 15,
                       ),
-
+// **
                       Container(
                         padding: const EdgeInsets.only(
                             right: 25, left: 18, top: 10, bottom: 10),
@@ -168,6 +197,8 @@ class _CreateAccountProviderScreenState
                       const SizedBox(
                         height: 15,
                       ),
+
+                      // ** here
 
                       TextFieldWidget(
                         controller: _controllerAdminName,
@@ -362,6 +393,7 @@ class _CreateAccountProviderScreenState
                         ),
                       ),
 
+
                       const SizedBox(
                         height: 15,
                       ),
@@ -399,7 +431,7 @@ class _CreateAccountProviderScreenState
                         height: 15,
                       ),
 
-                 // ** area
+                      // ** area
                       FieldAddProduct(
                         title: state.area != null
                             ? state.area.toString() + " KG "
@@ -468,6 +500,43 @@ class _CreateAccountProviderScreenState
                         },
                         child: SizedBox(),
                       ),
+                   
+                  //  //** manual Order */
+                  //    const SizedBox(
+                  //       height: 15,
+                  //     ),
+
+                  //       Row(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
+                  //   children: [
+                  //     Theme(
+                  //       data: Theme.of(context).copyWith(
+                  //         unselectedWidgetColor: Colors.white,
+                  //       ),
+                  //       child: Checkbox(
+                  //         tristate: false,
+                  //         shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(5),
+                  //             side: const BorderSide(
+                  //                 color: Colors.white, width: 2)),
+                  //         checkColor: Colors.white,
+                  //         activeColor: Palette.mainColor,
+                  //         value:state.isManualOrder,
+                  //         onChanged: (value) {
+                  //           ProviderCubit.get(context).changeIsManualOrderProvider(value!);
+                  //         },
+                  //       ),
+                  //     ),
+                  //     const Text(
+                  //       "الطلبات اليدوية (هل تسمح للعملاء بكتابة طلباتهم يدويا)",
+                  //       style: TextStyle(
+                  //           color: Colors.white, fontFamily: "pnuL"),
+                  //     ),
+                  //   ],
+                  // ),
+                
+                   
                       // ** data bank
                       const SizedBox(
                         height: 25,
@@ -480,7 +549,7 @@ class _CreateAccountProviderScreenState
                           textColor: Colors.black,
                           widget: FontWeight.w700),
 
-                 //** */ name Bank
+                      //** */ name Bank
                       const SizedBox(
                         height: 15,
                       ),
@@ -515,7 +584,7 @@ class _CreateAccountProviderScreenState
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: CustomButton(
-                            title: Strings.next,
+                            title: Strings.next.tr(),
                             onPressed: () {
                               if (isValidate(context, state)) {
                                 Provider provider = Provider(
@@ -527,6 +596,7 @@ class _CreateAccountProviderScreenState
                                     categoryId: state.categoryModel!.id,
                                     title: _controllerNameCompany.text,
                                     userId: "currentUser.id!",
+                                    password: _controllerPassword.text.trim(),
                                     email: _controllerEmail.text,
                                     logoCompany: state.imageLogo!,
                                     imagePassport: state.imagePassport!,
@@ -537,11 +607,13 @@ class _CreateAccountProviderScreenState
                                     lat: state.addressProvider!.lat!,
                                     lng: state.addressProvider!.lng!,
                                     rate: 0.0,
+                                    manualOrder: state.isManualOrder,
                                     status: 0,
                                     discount: 0,
                                     distance: 0,
                                     wallet: 0.0,
                                     createdAt: "createdAt");
+                                print(provider.password);
                                 ProviderCubit.get(context)
                                     .addProvider(provider, context: context);
                               }
@@ -577,6 +649,17 @@ class _CreateAccountProviderScreenState
           customBar: CustomSnackBar.error(
             backgroundColor: Colors.red,
             message: "اكتب ايميل الشركة".tr(),
+            textStyle: TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),
+          ));
+      return false;
+    } else if (_controllerPassword.text.isEmpty ||
+        _controllerPassword.text == "") {
+      showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.error(
+            backgroundColor: Colors.red,
+            message: "اكتب الرقم السرى ".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
@@ -652,7 +735,8 @@ class _CreateAccountProviderScreenState
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       return false;
-    }else if (_controllerNameBank.text.isEmpty || _controllerNameBank.text == "") {
+    } else if (_controllerNameBank.text.isEmpty ||
+        _controllerNameBank.text == "") {
       showTopMessage(
           context: context,
           customBar: CustomSnackBar.error(
@@ -662,18 +746,20 @@ class _CreateAccountProviderScreenState
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       return false;
-    } else if (_controllerIBanBank.text.isEmpty || _controllerIBanBank.text == "") {
+    } else if (_controllerIBanBank.text.isEmpty ||
+        _controllerIBanBank.text == "") {
       showTopMessage(
           context: context,
           customBar: CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message:"اكتب أيبان البنك".tr(),
+            message: "اكتب أيبان البنك".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       return false;
-    }  else {
+    } else {
       return true;
     }
   }
+
 }

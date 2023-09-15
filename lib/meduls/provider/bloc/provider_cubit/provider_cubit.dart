@@ -13,6 +13,7 @@ import 'package:hatlli/core/utils/app_model.dart';
 import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
 import 'package:hatlli/meduls/common/models/provider.dart';
 import 'package:hatlli/meduls/common/models/response_pagination.dart';
+import 'package:hatlli/meduls/provider/models/change_phone_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -36,13 +37,31 @@ class ProviderCubit extends Cubit<ProviderState> {
     emit(state.copyWith(categoryModel: newValue));
   }
 
+  viewPassword(bool newValue) {
+    print(newValue);
+    emit(state.copyWith(isDisplay: newValue));
+  }
+
   changeArea(double newValue) {
     print(newValue);
     emit(state.copyWith(area: newValue));
   }
 
+  emptyData() {
+    emit(ProviderState(
+        imageLogo: null,
+        imagePassport: null,
+        addressProvider: null,
+        area: null,
+        categoryModel: null));
+  }
+
   changeCurrentIndexDetailsProvider(int newIndex) {
     emit(state.copyWith(indexDetailsProvider: newIndex));
+  }
+
+   changeIsManualOrderProvider(bool newIndex) {
+    emit(state.copyWith(isManualOrder: newIndex));
   }
 
   selectAddressModel(AddressModel newValue) {
@@ -61,6 +80,8 @@ class ProviderCubit extends Cubit<ProviderState> {
       'Title': provider.title,
       'UserId': currentUser.id!,
       'About': provider.about,
+      //  'manualOrder': provider.manualOrder.toString(),
+      "Password": provider.password.toString(),
       'IBan': provider.iBan,
       'NameBunk': provider.nameBunk,
       "email": provider.email,
@@ -91,8 +112,16 @@ class ProviderCubit extends Cubit<ProviderState> {
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
-
-      emit(state.copyWith(createProviderState: RequestState.loaded));
+      // sendMessageToGmail(
+      //     email: provider.email,
+      //     message: " هذا هو الكود الخاص بمتجرك الرجاء الاحتفاظ به حتي تتمكن من الوصول الي متجرك".tr() + "\n" + currentUser.id!);
+      emit(state.copyWith(
+          createProviderState: RequestState.loaded,
+          imageLogo: null,
+          imagePassport: null,
+          addressProvider: null,
+          area: null,
+          categoryModel: null));
     } else {
       pop(context);
       emit(state.copyWith(createProviderState: RequestState.error));
@@ -141,10 +170,65 @@ class ProviderCubit extends Cubit<ProviderState> {
     }
   }
 
+// ** change phone
+  Future changePhoneProvider({email, password, context}) async {
+    showUpdatesLoading(context);
+    emit(state.copyWith(changePhoneState: RequestState.loading));
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('${ApiConstants.baseUrl}/provider/change-phone-provider'));
+    request.fields.addAll({
+      'UserId': currentUser.id!,
+      "Password": password.toString(),
+      "email": email,
+    });
+
+    http.StreamedResponse response = await request.send();
+
+    if (kDebugMode) {
+      print(
+          "${response.statusCode.toString()} ============ > changePhoneProvider");
+    }
+    if (response.statusCode == 200) {
+      String jsonDataString = await response.stream.bytesToString();
+      final jsonData = jsonDecode(jsonDataString);
+      ChangePhoneResponse phoneResponse=ChangePhoneResponse.fromJson(jsonData);
+      pop(context);
+      if(phoneResponse.status){
+         pushPageRoutName(context, navProvider);
+      showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.success(
+            backgroundColor: Colors.green,
+            message:phoneResponse.message ,
+            textStyle: TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),
+          ));
+      } else {
+        showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.error(
+            backgroundColor: Colors.red,
+            message:phoneResponse.message,
+            textStyle: TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),));
+      }
+ 
+      emit(state.copyWith(
+        changePhoneState: RequestState.loaded,
+      ));
+    } else {
+      pop(context);
+      emit(state.copyWith(changePhoneState: RequestState.error));
+    }
+  }
+
 // ** get provider Details
 
   Future getProviderDetails({providerId, context, isEdit = false}) async {
-    products = [];
+    //*** for pagination
+    if (currentUser.role == AppModel.userRole) {
+      products = [];
+    }
     emit(state.copyWith(getDetailsProviderState: RequestState.loading));
     var request = http.Request(
         'GET',
@@ -174,7 +258,6 @@ class ProviderCubit extends Cubit<ProviderState> {
       emit(state.copyWith(getDetailsProviderState: RequestState.error));
     }
   }
-
 
 // ** get provider by CatId
 
@@ -266,14 +349,18 @@ class ProviderCubit extends Cubit<ProviderState> {
   List<Product> products = [];
   List<Product> newProducts = [];
 
+  emptyList() {
+    emit(state.copyWith(products: []));
+  }
+
   Future getProductsByProviderId(
       {page, context, providerId, isState = true}) async {
-    newProducts = [];
     if (page == 1) {
       products = [];
       newProducts = [];
       currentPage = 1;
-      totalPages=0;
+      totalPages = 0;
+      emptyList();
     }
 
     if (isState)
@@ -298,7 +385,14 @@ class ProviderCubit extends Cubit<ProviderState> {
       newProducts = productsResponsePagination.items;
 
       totalPages = productsResponsePagination.totalPages;
+      print("items  ==>" +
+          productsResponsePagination.items.length.toString() +
+          "new products == >" +
+          newProducts.length.toString() +
+          "products ==== > " +
+          products.length.toString());
       products.addAll(newProducts);
+
       if (isState) {
         emit(state.copyWith(
             getProvidersByProviderIdState: RequestState.loaded,

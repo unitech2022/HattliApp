@@ -80,25 +80,24 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TabContainerProvider(
-                            title: "اسبوعي".tr(),
-                            width: 89,
-                            textColor: state.typeStatistTime == 0
-                                ? Colors.white
-                                : Color(0xffBBBBBB),
-                            backgroundColor: state.typeStatistTime == 0
-                                ? Palette.mainColor
-                                : Colors.transparent,
-                            onTap: () {
-                              StatistCubit.get(context)
-                                  .changeTypeTimeStatist(0);
-                              StatistCubit.get(context).changeEndDateStatist(
-                                  state.startDateStatist!, 0);
-                              StatistCubit.get(context).getReviewProvider(
-                                  context: context,
-                                  start: state.endDateStatist,
-                                  type: 0);
-                            },
-                          ),
+                              title: "اسبوعي".tr(),
+                              width: 89,
+                              textColor: state.typeStatistTime == 0
+                                  ? Colors.white
+                                  : Color(0xffBBBBBB),
+                              backgroundColor: state.typeStatistTime == 0
+                                  ? Palette.mainColor
+                                  : Colors.transparent,
+                              onTap: () {
+                                StatistCubit.get(context)
+                                    .changeTypeTimeStatist(0);
+                                StatistCubit.get(context).changeEndDateStatist(context:context,
+                                    state.startDateStatist!, 0).then((value) {
+
+                                    });
+                                
+                                
+                              }),
                           const SizedBox(
                             width: 12,
                           ),
@@ -114,12 +113,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               StatistCubit.get(context)
                                   .changeTypeTimeStatist(1);
-                              StatistCubit.get(context).changeEndDateStatist(
+                              StatistCubit.get(context).changeEndDateStatist(context:context,
                                   state.startDateStatist!, 1);
-                              StatistCubit.get(context).getReviewProvider(
-                                  context: context,
-                                  start: state.endDateStatist,
-                                  type: 1);
+                              // StatistCubit.get(context).getReviewProvider(
+                              //     context: context,
+                              //     start: state.endDateStatist,
+                              //     type: 1);
                             },
                           ),
                           const SizedBox(
@@ -137,12 +136,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               StatistCubit.get(context)
                                   .changeTypeTimeStatist(2);
-                              StatistCubit.get(context).changeEndDateStatist(
+                              StatistCubit.get(context).changeEndDateStatist(context:context,
                                   state.startDateStatist!, 2);
-                              StatistCubit.get(context).getReviewProvider(
-                                  context: context,
-                                  start: state.endDateStatist,
-                                  type: 2);
+                           
                             },
                           ),
                         ],
@@ -228,9 +224,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                       }
                                     },
                                     child: BestCitiesWidget(
-                                      precent:  (state.reviewModel!.most.id *
+                                        precent: (state.reviewModel!.most.id *
                                                 100) /
-                                            (state.reviewModel!.ordersAccepted + state.reviewModel!.ordersCanceled),
+                                            (state.reviewModel!.ordersAccepted +
+                                                state.reviewModel!
+                                                    .ordersCanceled),
                                         city:
                                             state.reviewModel!.most.description,
                                         countOrders:
@@ -354,13 +352,12 @@ class BestCitiesWidget extends StatelessWidget {
                 ? SizedBox()
                 : SizedBox(
                     width: 150,
-                    child: Expanded(
-                        child: Texts(
-                            line: 2,
-                            title: city,
-                            family: AppFonts.taM,
-                            textColor: Colors.grey,
-                            size: 12))),
+                    child: Texts(
+                        line: 2,
+                        title: city,
+                        family: AppFonts.taM,
+                        textColor: Colors.grey,
+                        size: 12)),
           ],
         ),
         SizedBox(
@@ -373,7 +370,7 @@ class BestCitiesWidget extends StatelessWidget {
         Spacer(),
         PercentWidget(
           color: Color(0xffA80AD8),
-          value:precent.isNaN ? 0.0 : precent,
+          value: precent.isNaN ? 0.0 : precent,
         )
       ]),
     );

@@ -27,10 +27,13 @@ class StatistCubit extends Cubit<StatistState> {
         startDateStatist: formatDate(
           DateTime.now(),
         ),
-        endDateStatist: formatDate(DateTime.now().subtract(Duration(days: 7)))));
+        endDateStatist:
+            formatDate(DateTime.now().subtract(Duration(days: 7)))));
 
     getReviewProvider(
-        context: context, start: formatDate(DateTime.now().subtract(Duration(days: 7))), type: 0);
+        context: context,
+        start: formatDate(DateTime.now().subtract(Duration(days: 7))),
+        type: 0);
   }
 
   changeTypeTimeStatist(int newValue) {
@@ -51,10 +54,12 @@ class StatistCubit extends Cubit<StatistState> {
   // SalesData('Apr', 32),
   // SalesData('May', 40)
 
-  changeEndDateStatist(String start, int type) {
+  Future changeEndDateStatist(String start, int type, {context}) async {
     DateTime? endDate;
     DateTime startDate = DateFormat('yyyy-MM-dd', "en").parse(start);
-    emit(state.copyWith(startDateStatist: formatDate(startDate)));
+    emit(state.copyWith(
+        startDateStatist: formatDate(startDate),
+        changeDateState: RequestState.loading));
     if (type == 0) {
       endDate = startDate.subtract(Duration(days: 7));
     } else if (type == 1) {
@@ -62,12 +67,17 @@ class StatistCubit extends Cubit<StatistState> {
     } else {
       endDate = startDate.subtract(Duration(days: 360));
     }
-
-    emit(state.copyWith(endDateStatist: formatDate(endDate)));
+    emit(state.copyWith(
+        endDateStatist: formatDate(endDate),
+        changeDateState: RequestState.loaded));
+    print(state.endDateStatist! + "======>");
+    StatistCubit.get(context).getReviewProvider(
+        context: context, start: state.endDateStatist, type: type);
   }
 
   Future getReviewProvider({context, start, type}) async {
     // showUpdatesLoading(context);
+
     emit(state.copyWith(getReviewsProviderState: RequestState.loading));
     var request = http.MultipartRequest(
         'POST', Uri.parse(ApiConstants.baseUrl + '/provider/review-provider'));
@@ -79,9 +89,14 @@ class StatistCubit extends Cubit<StatistState> {
     if (response.statusCode == 200) {
       String jsonDataString = await response.stream.bytesToString();
       final jsonData = jsonDecode(jsonDataString);
+      //  print(jsonData);
       ReviewModel reviewModel = ReviewModel.fromJson(jsonData);
-      print(reviewModel.ordersCanceled);
 
+
+      print(reviewModel.ordersCanceled.toString() + "   =======> ordersCanceled"
+      +reviewModel.ordersAccepted.toString() + "   =======> ordersAccepted"
+          +reviewModel.products.toString() + "   =======> products"
+      );
       data.add(SalesData("الطلبات", reviewModel.ordersCanceled));
       data.add(SalesData("المبيعات", reviewModel.ordersAccepted));
       data.add(SalesData("المنتجات", reviewModel.products));
@@ -129,9 +144,11 @@ class StatistCubit extends Cubit<StatistState> {
     emit(state.copyWith(getAllOrdersState: RequestState.loading));
     var headers = {'Authorization': token};
     var request = http.MultipartRequest(
-        'Get', Uri.parse(ApiConstants.baseUrl + '/orders/get-Orders-by-marketId?marketId=${providerId.toString()}'));
-   
- request.headers.addAll(headers);
+        'Get',
+        Uri.parse(ApiConstants.baseUrl +
+            '/orders/get-Orders-by-marketId?marketId=${providerId.toString()}'));
+
+    request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     print(response.statusCode.toString() + "   =======> getAllOrders");
     if (response.statusCode == 200) {

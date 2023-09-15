@@ -28,7 +28,8 @@ class _ProductsProviderScreenState extends State<ProductsProviderScreen> {
   
 
     super.initState();
-    ProviderCubit.get(context).getProductsByProviderId(page: 1,providerId: currentProvider!.id);
+
+    //
     fetchData();
     
   }

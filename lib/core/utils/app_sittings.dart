@@ -1,3 +1,3 @@
 class AppSittings {
-  static const int pageSize = 6;
+  static const int pageSize = 15;
 }

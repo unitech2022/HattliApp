@@ -151,145 +151,154 @@ class AuthCubit extends Cubit<AuthState> {
 
   ///** */ login method
   Future userLogin({userName, context, role, code}) async {
-       bool internetResult = await hasInternet();
+    bool internetResult = await hasInternet();
     showUpdatesLoading(context);
     emit(state.copyWith(
       loginUserState: RequestState.loading,
     ));
-    if(internetResult){
-  var request =
-        http.MultipartRequest('POST', Uri.parse(ApiConstants.loginPath));
-    request.fields.addAll({
-      'DeviceToken': 'ffffffff',
-      'UserName': userName,
-      "code": code.toString(),
-      'Role': role
-    });
+    if (internetResult) {
+      var request =
+          http.MultipartRequest('POST', Uri.parse(ApiConstants.loginPath));
+      request.fields.addAll({
+        'DeviceToken': 'ffffffff',
+        'UserName': userName,
+        "code": code.toString(),
+        'Role': role
+      });
 
-    http.StreamedResponse response = await request.send();
-    if (kDebugMode) {
-      print("${response.statusCode} ======> loginUser");
-    }
-
-    if (response.statusCode == 200) {
-      String jsonDataString = await response.stream.bytesToString();
-      final jsonData = jsonDecode(jsonDataString);
-      UserResponse userResponseModel = UserResponse.fromJson(jsonData);
-
-      token = "Bearer ${userResponseModel.token}";
-
-      currentUser.id = userResponseModel.user!.id;
-      currentUser.role = role;
-      currentUser.deviceToken = userResponseModel.user!.deviceToken;
-      currentUser.token = token;
-      currentUser.userName = userResponseModel.user!.userName;
-
-      // print("token" + token + currentUser!.userName);
-      await saveToken(currentUser);
-      if (timer!.isActive) {
-        timer!.cancel();
+      http.StreamedResponse response = await request.send();
+      if (kDebugMode) {
+        print("${response.statusCode} ======> loginUser");
       }
-      pop(context);
-      if (role == AppModel.providerRole) {
-        // pushPageRoutName(context, navProvider);
 
-        pushReplaceTranslationPage(
-            context: context,
-            transtion: SizeTransitionPage(
-              page: NavigationProviderScreen(),
-            ));
+      if (response.statusCode == 200) {
+        String jsonDataString = await response.stream.bytesToString();
+        final jsonData = jsonDecode(jsonDataString);
+        UserResponse userResponseModel = UserResponse.fromJson(jsonData);
+
+        token = "Bearer ${userResponseModel.token}";
+
+        currentUser.id = userResponseModel.user!.id;
+        currentUser.role = role;
+        currentUser.deviceToken = userResponseModel.user!.deviceToken;
+        currentUser.token = token;
+        currentUser.status = userResponseModel.user!.status;
+        currentUser.userName = userResponseModel.user!.userName;
+
+        // print("token" + token + currentUser!.userName);
+        await saveToken(currentUser);
+        if (timer!.isActive) {
+          timer!.cancel();
+        }
+        pop(context);
+        if (role == AppModel.providerRole) {
+          // pushPageRoutName(context, navProvider);
+
+          pushReplaceTranslationPage(
+              context: context,
+              transtion: SizeTransitionPage(
+                page: NavigationProviderScreen(),
+              ));
+        } else {
+          pushReplaceTranslationPage(
+              context: context,
+              transtion: SizeTransitionPage(
+                page: NavigationUserScreen(),
+              ));
+          // pushPageRoutName(context, navUser);
+        }
+
+        emit(state.copyWith(
+            loginUserState: RequestState.loaded,
+            userResponseModel: userResponseModel));
       } else {
-        pushReplaceTranslationPage(
-            context: context,
-            transtion: SizeTransitionPage(
-              page: NavigationUserScreen(),
-            ));
-        // pushPageRoutName(context, navUser);
+        pop(context);
+        showErrorLoading(context, "something_went_wrong");
+        emit(state.copyWith(
+          loginUserState: RequestState.error,
+        ));
       }
-
-      emit(state.copyWith(
-          loginUserState: RequestState.loaded,
-          userResponseModel: userResponseModel));
     } else {
       pop(context);
-      showErrorLoading(context, "something_went_wrong");
-      emit(state.copyWith(
-        loginUserState: RequestState.error,
-      ));
-    }
-    }else {
-      pop(context);
-       showTopMessage(
+      showTopMessage(
           context: context,
-          customBar:  CustomSnackBar.error(
+          customBar: CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message:  "لا يوجد اتصال بالانترنت".tr(),
+            message: "لا يوجد اتصال بالانترنت".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       emit(state.copyWith(registerUserState: RequestState.noInternet));
     }
-  
   }
 
 //** */ check userName
   Future checkUserName({context, userName, role}) async {
     bool internetResult = await hasInternet();
     showUpdatesLoading(context);
-      emit(state.copyWith(registerUserState: RequestState.loading));
-    if(internetResult){
-    var request =
-        http.MultipartRequest('POST', Uri.parse(ApiConstants.checkUserPath));
-    request.fields.addAll({'userName': userName, "userRole": role});
+    emit(state.copyWith(registerUserState: RequestState.loading));
+    if (internetResult) {
+      var request =
+          http.MultipartRequest('POST', Uri.parse(ApiConstants.checkUserPath));
+      request.fields.addAll({'userName': userName, "userRole": role});
 
-    http.StreamedResponse response = await request.send();
-    if (kDebugMode) {
-      print("${response.statusCode} ========> checkUser");
-    }
-    if (response.statusCode == 200) {
-      String jsonDataString = await response.stream.bytesToString();
-      final jsonData = jsonDecode(jsonDataString);
-      CheckUserResponse checkUserResponse =
-          CheckUserResponse.fromJson(jsonData);
-      pop(context);
+      http.StreamedResponse response = await request.send();
+      if (kDebugMode) {
+        print("${response.statusCode} ========> checkUser");
+      }
+      if (response.statusCode == 200) {
+        String jsonDataString = await response.stream.bytesToString();
+        final jsonData = jsonDecode(jsonDataString);
+        CheckUserResponse checkUserResponse =
+            CheckUserResponse.fromJson(jsonData);
+        pop(context);
 
-      pushTranslationPage(
-          context: context,
-          transtion: SlideTransitionPage(
-              page: OtpScreen(
-                phoneNumber: userName,
-                codeSend: checkUserResponse.code,
-              ),
-              dx: 1.0,
-              yx: 0.0));
-      // pushPage(
-      //     context,
-      //     OtpScreen(
-      //       phoneNumber: userName,
-      //       codeSend: checkUserResponse.code,
-      //     ));
-      emit(state.copyWith(
-        loginUserState: RequestState.loaded,
-      ));
+       if(checkUserResponse.status==2){
+
+         showTopMessage(
+             context: context,
+             customBar: CustomSnackBar.error(
+                 backgroundColor: Colors.red,
+                 message: "تم غلق هذا الحساب".tr(),
+                 textStyle: TextStyle(
+                     fontFamily: "font", fontSize: 16, color: Colors.white)));
+       }else{
+         pushTranslationPage(
+             context: context,
+             transtion: SlideTransitionPage(
+                 page: OtpScreen(
+                   phoneNumber: userName,
+                   codeSend: checkUserResponse.code,
+                 ),
+                 dx: 1.0,
+                 yx: 0.0));
+       }
+        // pushPage(
+        //     context,
+        //     OtpScreen(
+        //       phoneNumber: userName,
+        //       codeSend: checkUserResponse.code,
+        //     ));
+        emit(state.copyWith(
+          loginUserState: RequestState.loaded,
+        ));
+      } else {
+        pop(context);
+        showErrorLoading(context, 'حدث خطأ');
+        emit(state.copyWith(registerUserState: RequestState.error));
+      }
     } else {
       pop(context);
-      showErrorLoading(context, 'حدث خطأ');
-      emit(state.copyWith(registerUserState: RequestState.error));
-    }
-    }else {
-      pop(context);
-       showTopMessage(
+      showTopMessage(
           context: context,
-          customBar:  CustomSnackBar.error(
+          customBar: CustomSnackBar.error(
             backgroundColor: Colors.red,
-            message:  "لا يوجد اتصال بالانترنت".tr(),
+            message: "لا يوجد اتصال بالانترنت".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       emit(state.copyWith(registerUserState: RequestState.noInternet));
     }
-  
-
   }
 
 //** */ createProvider
@@ -398,4 +407,28 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(registerUserState: RequestState.error));
     }
   }
+
+  // ** delete account
+  Future deleteAccount({context}) async {
+    emit(state.copyWith(deleteAccountState: RequestState.loading));
+    var request =
+    http.MultipartRequest('POST', Uri.parse(ApiConstants.deleteAccount));
+    request.fields.addAll({'userId': currentUser.id!});
+
+    http.StreamedResponse response = await request.send();
+    if (kDebugMode) {
+      print("${response.statusCode} ========> deleteAccount");
+    }
+    if (response.statusCode == 200) {
+      signOut(ctx: context);
+      emit(state.copyWith(
+        deleteAccountState: RequestState.loaded,
+      ));
+    } else {
+      pop(context);
+      showErrorLoading(context, 'حدث خطأ');
+      emit(state.copyWith(deleteAccountState: RequestState.error));
+    }
+  }
+
 }

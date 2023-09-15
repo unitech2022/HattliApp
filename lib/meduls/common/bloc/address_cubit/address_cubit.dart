@@ -20,6 +20,7 @@ part 'address_state.dart';
 
 class AddressCubit extends Cubit<AddressState> {
   AddressCubit() : super(const AddressState());
+
   static AddressCubit get(context) => BlocProvider.of<AddressCubit>(context);
 
   String detailsAddress = "";
@@ -43,19 +44,18 @@ class AddressCubit extends Cubit<AddressState> {
         print("${response.statusCode} ========>getAddress");
       }
       if (response.statusCode == 200) {
-      
         String jsonDataString = await response.stream.bytesToString();
         final jsonData = jsonDecode(jsonDataString);
         AddressModel addressModel = AddressModel.fromJson(jsonData);
         lat = addressModel.lat!;
         lng = addressModel.lng!;
         initMap(newLat: addressModel.lat!, newLng: addressModel.lng);
-         getAddresses(addressModel.lat!,  addressModel.lng!);
-          pop(context);
+        getAddresses(addressModel.lat!, addressModel.lng!);
+        pop(context);
         emit(state.copyWith(
             getAddressState: RequestState.loaded, address: addressModel));
       } else {
-         getAddresses( locData.latitude!,  locData.longitude!);
+        getAddresses(locData.latitude!, locData.longitude!);
         pop(context);
         emit(state.copyWith(getAddressState: RequestState.error));
       }
@@ -64,10 +64,9 @@ class AddressCubit extends Cubit<AddressState> {
           context: context,
           newLat: locData.latitude,
           newLng: locData.longitude);
-            getAddresses( locData.latitude!,  locData.longitude!);
+      getAddresses(locData.latitude!, locData.longitude!);
       emit(state.copyWith(getAddressState: RequestState.loaded));
     }
-    
   }
 
   //** */ add address
@@ -126,7 +125,6 @@ class AddressCubit extends Cubit<AddressState> {
       pop(context);
       pushPageRoutName(context, navUser);
       emit(state.copyWith(addAddressState: RequestState.loaded));
-
     } else {
       pop(context);
       emit(state.copyWith(addAddressState: RequestState.error));
@@ -135,6 +133,7 @@ class AddressCubit extends Cubit<AddressState> {
 
   // ** search location
   List<dynamic> placeList = [];
+
   Future getSuggestion(String input) async {
     emit(state.copyWith(searchLocationState: RequestState.loading));
     String kPLACES_API_KEY = ApiConstants.apiGoogleMapKey;

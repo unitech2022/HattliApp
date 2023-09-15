@@ -7,6 +7,7 @@ import 'package:hatlli/core/animations/slide_transtion.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
 import 'package:hatlli/core/extension/theme_extension.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
+import 'package:hatlli/core/layout/palette.dart';
 import 'package:hatlli/core/layout/screen_size.dart';
 import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/utils/api_constatns.dart';
@@ -14,12 +15,15 @@ import 'package:hatlli/core/utils/app_model.dart';
 import 'package:hatlli/core/utils/app_sittings.dart';
 import 'package:hatlli/core/widgets/circular_progress.dart';
 import 'package:hatlli/core/widgets/empty_list_widget.dart';
+import 'package:hatlli/meduls/common/models/category.dart';
 
 import 'package:hatlli/meduls/common/models/product.dart';
 import 'package:hatlli/meduls/provider/bloc/provider_cubit/provider_cubit.dart';
 import 'package:hatlli/meduls/provider/models/details_provider_response.dart';
 import 'package:hatlli/meduls/user/bloc/cart_cubit/cart_cubit.dart';
 import 'package:hatlli/meduls/user/models/cart_model.dart';
+import 'package:hatlli/meduls/user/ui/manual_order_screen/manual_order_screen.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 import '../../../../../core/layout/app_fonts.dart';
 import '../../../../../core/layout/app_radius.dart';
@@ -72,19 +76,83 @@ class _StoreProviderWidgetState extends State<StoreProviderWidget> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProviderCubit, ProviderState>(
       builder: (context, state) {
-        return state.getProvidersByProviderIdState==RequestState.loaded&& ProviderCubit.get(context).products.isEmpty
+        return state.getProvidersByProviderIdState == RequestState.loaded &&
+                ProviderCubit.get(context).products.isEmpty
             ? EmptyListWidget(message: "لا توجد منتجات".tr())
             : SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Texts(
                             title: "أحدث المنتجات : ".tr(),
                             family: AppFonts.taB,
                             size: 14,
                             widget: FontWeight.bold),
+                        categories
+                                    .firstWhere(
+                                      (element) =>
+                                          element.id ==
+                                          widget.providerDetails.provider!
+                                              .categoryId,
+                                      orElse: () => CategoryModel(
+                                          id: 0,
+                                          name: "name",
+                                          nameEng: "nameEng",
+                                          imageUrl: "imageUrl",
+                                          status: 0,
+                                          createdAt: ""),
+                                    )
+                                    .status ==
+                                1
+                            ? TextButton(
+                                onPressed: () {
+                                  if (currentUser.status == 1) {
+                                    showTopMessage(
+                                        context: context,
+                                        customBar: CustomSnackBar.error(
+                                            backgroundColor: Colors.red,
+                                            message:
+                                                "هذا الرقم محظور تواصل مع خدمة العملاء"
+                                                    .tr(),
+                                            textStyle: TextStyle(
+                                                fontFamily: "font",
+                                                fontSize: 16,
+                                                color: Colors.white)));
+                                  } else {
+                                    pushTranslationPage(
+                                        context: context,
+                                        transtion: FadTransition(
+                                            page: ManualOrderScreen(
+                                                providerId: widget
+                                                    .providerDetails
+                                                    .provider!
+                                                    .id)));
+                                  }
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/orders.svg",
+                                      color: Palette.mainColor,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Texts(
+                                        title: "طلب يدوى".tr(),
+                                        family: AppFonts.taB,
+                                        textColor: Palette.mainColor,
+                                        size: 14,
+                                        widget: FontWeight.bold),
+                                  ],
+                                ),
+                              )
+                            : SizedBox(),
                       ],
                     ),
                     const SizedBox(
@@ -256,7 +324,8 @@ class _StoreProviderWidgetState extends State<StoreProviderWidget> {
                                                               createdAt:
                                                                   "createdAt");
                                                       CartCubit.get(context)
-                                                          .addCart(cartModel);
+                                                          .addCart(cartModel,
+                                                              context: context);
                                                     }
                                                   } else {
                                                     showDialogLogin(

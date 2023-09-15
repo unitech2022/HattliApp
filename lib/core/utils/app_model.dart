@@ -9,12 +9,14 @@ import 'package:hatlli/meduls/user/ui/home_user_screen/home_user_screen.dart';
 import 'package:hatlli/meduls/user/ui/orders_screen/orders_screen.dart';
 import 'package:hatlli/meduls/user/ui/providers_screen/providers_screen.dart';
 
+import '../../meduls/common/models/address_model.dart';
 import '../../meduls/common/models/category.dart';
 import '../../meduls/common/models/current_user.dart';
 import '../../meduls/common/models/provider.dart';
 
 UserDetailsPref currentUser = UserDetailsPref();
 Provider? currentProvider;
+AddressModel? currentAddress;
 String token = "";
 
 

@@ -3,6 +3,7 @@ part of 'auth_cubit.dart';
 class AuthState extends Equatable {
   // register
   final RequestState? registerUserState;
+  final RequestState? deleteAccountState;
   final ResponseRegister? responseRegister;
 
   // login
@@ -31,6 +32,7 @@ class AuthState extends Equatable {
   const AuthState(
       {this.registerUserState,
       this.responseRegister,
+        this.deleteAccountState,
       this.checkUserState,
       this.userResponseModel,
       this.errorImageMessage,
@@ -54,6 +56,7 @@ class AuthState extends Equatable {
       final userResponseModel,
       final checkUserState,
       final int? roleUser,
+        final RequestState? deleteAccountState,
       final errorImageMessage,
       final image,
       final imageState,
@@ -68,6 +71,7 @@ class AuthState extends Equatable {
       
       }) {
     return AuthState(
+        deleteAccountState: deleteAccountState ?? this.deleteAccountState,
         checkUserState: checkUserState ?? this.checkUserState,
         resendCodeState: resendCodeState ?? this.resendCodeState,
          timerCount: timerCount ?? this.timerCount,
@@ -91,6 +95,7 @@ class AuthState extends Equatable {
 
   @override
   List<Object?> get props => [
+    deleteAccountState,
     timerCount,
     resendCodeState,
         registerUserState,

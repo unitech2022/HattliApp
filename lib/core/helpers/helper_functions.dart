@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hatlli/core/layout/palette.dart';
 import 'package:hatlli/core/router/routes.dart';
@@ -18,6 +20,7 @@ import 'package:hatlli/core/widgets/texts.dart';
 import 'package:hatlli/meduls/common/models/current_user.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../meduls/common/bloc/auth_cubit/auth_cubit.dart';
 import '../../meduls/common/ui/select_type_account_screen/select_type_account_screen.dart';
 import '../utils/app_model.dart';
 
@@ -225,8 +228,6 @@ callUs(context) => Container(
       ),
     );
 
-
-
 replacePage({context, page}) {
   Navigator.of(context)
       .pushReplacement(MaterialPageRoute(builder: (context) => page));
@@ -249,6 +250,81 @@ signOut({ctx}) async {
 
   replacePage(context: ctx, page: const SelectTypeAccountScreen());
 }
+void showDialogDeleteAccount({context}) {
+  showDialog<void>(
+    context: context,
+
+    barrierDismissible: false,
+    // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 20),
+        title: Text(
+          "حذف الحساب".tr(),
+          style: TextStyle(fontSize: 20, color: Palette.mainColor),
+        ),
+        content: Container(
+          width: widthScreen(context),
+          child: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                        child: Text(
+                          "هل أنت متأكد أنك تريد جذف الحساب ؟".tr(),
+                          style: TextStyle(fontSize: 20, color: Colors.black),
+                          textAlign: TextAlign.center,
+                        )),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: <Widget>[
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      elevation: 0,
+                      backgroundColor: Palette.mainColor,
+                      titleColor: Colors.white,
+                      onPressed: () async {
+                        // AuthCubit.get(context)
+                        //     .deleteAccount(context: context);
+                        signOut(ctx: context);
+                      },
+                      title: "نعم".tr(),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: CustomButton(
+                      elevation: 0,
+                      backgroundColor: Colors.white,
+                      titleColor: Colors.red,
+                      onPressed: () async {
+                        pop(context);
+                      },
+                      title: "الغاء".tr(),
+                    ),
+                  ),
+                ],
+              );
+            },
+          )
+        ],
+      );
+    },
+  );
+}
+
 
 pushPageRoutName(context, route) {
   Navigator.pushNamed(
@@ -294,7 +370,7 @@ saveToken(UserDetailsPref user) {
 
   storage.write(key: 'deviceToken', value: user.deviceToken);
   storage.write(key: 'role', value: user.role);
-  // storage.write(key: 'lat', value: userResponse.user!.lat.toString());
+  storage.write(key: 'status', value: user.status.toString());
   //   storage.write(key: 'lng', value: userResponse.user!.lng.toString());
   // storage.write(key: 'name', value: userResponse.user!.fullName);
   // storage.write(key: 'email', value: currentUser!.user!.email);
@@ -314,8 +390,9 @@ readToken() async {
     // currentUser!.fullName != (await storage.read(key: "name"));
     currentUser.userName = (await storage.read(key: "userName"));
     currentUser.deviceToken = (await storage.read(key: "deviceToken") ?? "");
+    currentUser.status = int.parse((await storage.read(key: "status") ?? "0"));
     if (kDebugMode) {
-      print("token : $token");
+      print("token == >: ${currentUser.status}");
     }
   } catch (e) {
     print(e.toString() + " sfsdl");
@@ -643,4 +720,32 @@ int createUniqueId() {
 Future<bool> hasInternet() async {
   bool result = await InternetConnectionChecker().hasConnection;
   return result;
+}
+
+// "service_id":"",
+// "template_id":"",
+// "user_id":"
+Future sendMessageToGmail({name, email, subject, message}) async {
+  final serverId = "service_4t05xj5";
+  final templateId = "template_yu3gmfq";
+  final userId = "OJyunrFeJoqoUxgK-";
+  final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
+  final response = await http.post(url,
+      headers: {
+        "origin": 'http://localhost',
+        "Content-Type": 'application/json'
+      },
+      body: json.encode({
+        'service_id': serverId,
+        'template_id': templateId,
+        'user_id': userId,
+        'template_params': {
+          'to_email': email,
+          'user_email': 'www.hatli.sa@gmail.com',
+          'user_subject': "Id Your Market".tr(),
+          'user_message': message
+        }
+      }));
+
+  print(response.body);
 }

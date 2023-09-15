@@ -13,7 +13,7 @@ import 'package:hatlli/core/widgets/circular_progress.dart';
 import 'package:hatlli/meduls/common/bloc/address_cubit/address_cubit.dart';
 import 'package:hatlli/meduls/common/ui/map_screen/search_location_screen/search_location_screen.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import '../../../../core/enums/loading_status.dart';
+
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/widgets/back_button.dart';
 import '../../models/address_model.dart';
@@ -63,8 +63,8 @@ class _MapScreenState extends State<MapScreen> {
     }else{
        AddressCubit.get(context).initMap(
           context: context,
-          newLat:locData.latitude,
-          newLng:locData.longitude);
+          newLat:locData.latitude??0.0,
+          newLng:locData.longitude??0.0);
     }
   }
 
@@ -342,9 +342,9 @@ class _MapScreenState extends State<MapScreen> {
                             context: context,
                             newLat: AddressCubit.get(context).lat,
                             newLng: AddressCubit.get(context).lng);
-                        AddressCubit.get(context).getAddresses(
-                            AddressCubit.get(context).lat,
-                            AddressCubit.get(context).lng);
+                        // AddressCubit.get(context).getAddresses(
+                        //     AddressCubit.get(context).lat,
+                        //     AddressCubit.get(context).lng);
 
                         setState(() {});
                       });

@@ -33,6 +33,7 @@ class Order extends Equatable {
   final int providerId;
   final int status;
   final int payment;
+   final int type;
   final String userId;
   final double totalCost;
   final double productsCost;
@@ -44,6 +45,7 @@ class Order extends Equatable {
       {required this.id,
       required this.providerId,
       required this.status,
+       required this.type,
       required this.userId,
       required this.totalCost,
       required this.productsCost,
@@ -57,6 +59,7 @@ class Order extends Equatable {
       providerId: json["providerId"],
       status: json["status"],
       userId: json["userId"],
+      type: json["type"],
       totalCost: json["totalCost"].toDouble(),
       productsCost: json["productsCost"].toDouble(),
       // driverId: json["driverId"],
@@ -69,6 +72,7 @@ class Order extends Equatable {
       providerId: json["order"]["providerId"],
       status: json["order"]["status"],
       userId: json["order"]["userId"],
+       type: json["order"]["type"],
       totalCost: json["order"]["totalCost"].toDouble(),
       productsCost: json["order"]["productsCost"].toDouble(),
       // driverId: json["driverId"],

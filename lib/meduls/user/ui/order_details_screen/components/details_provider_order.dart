@@ -98,7 +98,7 @@ class _DetailsProviderOrderState extends State<DetailsProviderOrder> {
                   Texts(
                       title: "السعر".tr() +
                           " : " +
-                          widget.response.order!.productsCost.toString() +
+                          widget.response.order!.totalCost.toString() +
                           " SAR",
                       family: AppFonts.taB,
                       size: 16,

@@ -31,6 +31,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     NotificationCubit.get(context).getAlerts(context: context);
   }
 
@@ -56,7 +57,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               //           height: 17,
               //           width: 26,
               //         ))),
-              title:  Texts(
+              title: Texts(
                   title: "الاشعارات".tr(),
                   family: AppFonts.taB,
                   size: 18,
@@ -67,24 +68,28 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             body: state.getAlertsState == RequestState.loaded
                 ? state.alertResponse!.alerts.isEmpty
-                    ?  EmptyListWidget(message: "لا توجد اشعارات ".tr())
+                    ? EmptyListWidget(message: "لا توجد اشعارات ".tr())
                     : ListView.builder(
                         padding: const EdgeInsets.only(
                             left: 16, right: 16, top: 50, bottom: 40),
                         itemCount: state.alertResponse!.alerts.length,
                         itemBuilder: ((context, index) {
                           AlertResponse alertResponse = state.alertResponse!;
+                          NotificationModel model =
+                              state.alertResponse!.alerts[index];
                           return GestureDetector(
                             onTap: () {
                               NotificationCubit.get(context)
                                   .viewAlert(alertResponse.alerts[index].id,
                                       context: context)
                                   .then((value) {
-                                pushPage(
-                                    context,
-                                    OrderDetailsScreen(
-                                        id: alertResponse
-                                            .alerts[index].pageId!));
+                                if (alertResponse.alerts[index].pageId != 0) {
+                                  pushPage(
+                                      context,
+                                      OrderDetailsScreen(
+                                          id: alertResponse
+                                              .alerts[index].pageId!));
+                                }
                               });
                             },
                             child: Container(
@@ -126,15 +131,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Texts(
-                                        title:
-                                          "طلب رقم : ".tr() + alertResponse.alerts[index].pageId.toString(),
+                                        title: model.pageId == 0
+                                            ? model.title!.tr()
+                                            : "طلب رقم : ".tr() +
+                                                alertResponse
+                                                    .alerts[index].pageId
+                                                    .toString(),
                                         family: AppFonts.caR,
                                         size: 12,
                                         // textColor: const Color(0xffC3C3C3),
                                       ),
                                       Texts(
                                         title: alertResponse
-                                            .alerts[index].description!.tr(),
+                                            .alerts[index].description!
+                                            .tr(),
                                         family: AppFonts.caR,
                                         size: 12,
                                         textColor: const Color(0xffC3C3C3),

@@ -68,7 +68,7 @@ class Address extends Equatable {
         id: json["id"],
         userId: json["userId"],
         description: json["description"],
-        name: json["name"],
+        name: json["name"]??"",
         lat: json["lat"]?.toDouble(),
         lng: json["lng"]?.toDouble(),
         defaultAddress: json["defaultAddress"],

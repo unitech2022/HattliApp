@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/utils/app_model.dart';
 import 'package:hatlli/meduls/provider/bloc/provider_cubit/provider_cubit.dart';
 import 'package:hatlli/meduls/user/models/cart_model.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 import '../../../../core/enums/loading_status.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +26,17 @@ class CartCubit extends Cubit<CartState> {
 
 // ** add cart
   Future addCart(CartModel cartModel, {context}) async {
-    cartsFound.containsValue(cartModel.productId)
+    if(currentUser.status==1){
+      showTopMessage(
+            context: context,
+            customBar: CustomSnackBar.error(
+                backgroundColor: Colors.red,
+                message: "هذا الرقم محظور تواصل مع خدمة العملاء".tr(),
+                textStyle: TextStyle(
+                    fontFamily: "font", fontSize: 16, color: Colors.white)));
+
+    }else {
+ cartsFound.containsValue(cartModel.productId)
         ? cartsFound.remove(cartModel.productId)
         : cartsFound.addAll({cartModel.productId: cartModel.productId});
     emit(state.copyWith(addCartState: RequestState.loading));
@@ -50,6 +64,8 @@ class CartCubit extends Cubit<CartState> {
     } else {
       emit(state.copyWith(addCartState: RequestState.error));
     }
+    }
+   
   }
 
 // ** delete cart

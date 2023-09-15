@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hatlli/core/animations/slide_transtion.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
 import 'package:hatlli/core/helpers/Notification_controller.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
@@ -13,6 +14,7 @@ import 'package:hatlli/core/widgets/custom_button.dart';
 import 'package:hatlli/core/widgets/texts.dart';
 
 import 'package:hatlli/meduls/provider/ui/add_product_screen/add_product_screen.dart';
+import 'package:hatlli/meduls/provider/ui/change_phone_provider_screen/change_phone_provider_screen.dart';
 import 'package:hatlli/meduls/provider/ui/create_account_provider_screen/create_account_provider_screen.dart';
 
 import '../../../../core/layout/app_fonts.dart';
@@ -21,6 +23,7 @@ import '../../../../core/utils/app_model.dart';
 import '../../../../core/widgets/circular_progress.dart';
 import '../../../common/bloc/home_cubit/home_cubit.dart';
 import '../../../user/ui/components/darwer_widget.dart';
+import '../../bloc/provider_cubit/provider_cubit.dart';
 import '../home_screen/home_screen.dart';
 
 class NavigationProviderScreen extends StatefulWidget {
@@ -38,28 +41,57 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
   void initState() {
     super.initState();
     getFCMToken();
-    HomeCubit.get(context).getHomeProvider(context: context);
+    ProviderCubit.get(context).products = [];
+    HomeCubit.get(context).getHomeProvider(context: context).then((value) {
+      ProviderCubit.get(context)
+          .getProductsByProviderId(page: 1, providerId: currentProvider!.id);
+    });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       pushPageRoutName(context, notyUser);
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
+        print(state);
         switch (state.getHomeProviderState) {
           case RequestState.noInternet:
             return NoInternetWidget(
               onPress: () {
-                 HomeCubit.get(context).getHomeProvider(context: context);
+                HomeCubit.get(context).getHomeProvider(context: context);
               },
             );
           case RequestState.loaded:
             return state.homeResponseProvider!.provider == null
                 ? Scaffold(
+                    bottomSheet: Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                                onPressed: () {
+                                  pushTranslationPage(
+                                      context: context,
+                                      transtion: FadTransition(
+                                          page: ChangePhoneProviderScreen()));
+                                },
+                                child: Text(
+                                  "لدى متجر بالفعل ".tr(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontFamily: AppFonts.caB,
+                                      color: Colors.blue),
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
                     body: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Center(
@@ -84,7 +116,10 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                                   style: TextStyle(
                                       fontFamily: AppFonts.caB,
                                       color: Colors.red),
-                                ))
+                                )),
+                            SizedBox(
+                              height: 20,
+                            ),
                           ],
                         ),
                       ),
@@ -184,7 +219,12 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
                     body: RefreshIndicator(
                       onRefresh: () async {
                         HomeCubit.get(context)
-                            .getHomeProvider(context: context);
+                            .getHomeProvider(context: context)
+                            .then((value) {
+                          ProviderCubit.get(context).getProductsByProviderId(
+                              page: 1, providerId: currentProvider!.id);
+                        });
+                        ;
                       },
                       child: IndexedStack(
                         index: state.currentNavIndex,
@@ -237,8 +277,10 @@ class _NavigationProviderScreenState extends State<NavigationProviderScreen> {
       // NotifyAowsome(notification!.title!,notification.body!);
       if (notification != null && android != null && !kIsWeb) {
         print("tokrrrrrrnseneeeeee");
+      if(currentUser.role==AppModel.providerRole){
         HomeCubit.get(context)
             .getHomeProvider(context: context, isState: false);
+      }
 
         AwesomeNotifications().createNotification(
             content: NotificationContent(

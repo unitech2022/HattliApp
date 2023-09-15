@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
-class CategoryModel extends Equatable{
+class CategoryModel extends Equatable {
   final int id;
   final String name;
-    final String nameEng;
+  final String nameEng;
   final String imageUrl;
   final int status;
   final String createdAt;
@@ -11,7 +11,7 @@ class CategoryModel extends Equatable{
   const CategoryModel(
       {required this.id,
       required this.name,
-          required this.nameEng,
+      required this.nameEng,
       required this.imageUrl,
       required this.status,
       required this.createdAt});
@@ -19,12 +19,11 @@ class CategoryModel extends Equatable{
   factory CategoryModel.fromJson(Map<String, dynamic> json) => CategoryModel(
       id: json["id"],
       name: json["name"],
-       nameEng: json["nameEng"],
+      nameEng: json["nameEng"],
       imageUrl: json["imageUrl"],
       status: json["status"],
       createdAt: json["createdAt"]);
-      
-        @override
-        // TODO: implement props
-        List<Object?> get props => [id,name,imageUrl,status,nameEng,createdAt];
+
+  @override
+  List<Object?> get props => [id, name, imageUrl, status, nameEng, createdAt];
 }

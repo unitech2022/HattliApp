@@ -10,7 +10,6 @@ import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/layout/app_fonts.dart';
 import 'package:hatlli/core/utils/utils.dart';
 import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
-import 'package:hatlli/meduls/provider/bloc/provider_cubit/provider_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
@@ -172,7 +171,7 @@ class ProductCubit extends Cubit<ProductState> {
       // pop(context);
 
      pop(context);
-
+      pushPageRoutName(context, navProvider);
       showTopMessage(
           context: context,
           customBar: CustomSnackBar.success(
@@ -184,7 +183,7 @@ class ProductCubit extends Cubit<ProductState> {
       // HomeCubit.get(context).getHomeProvider(context: context);
       emit(state.copyWith(addProductsState: RequestState.loaded, images: []));
 
-      HomeCubit.get(context).getHomeProvider(context: context);
+      // HomeCubit.get(context).getHomeProvider(context: context);
 
 
     } else {
@@ -206,7 +205,7 @@ class ProductCubit extends Cubit<ProductState> {
     }
     if (response.statusCode == 200) {
       pop(context);
-      pop(context);
+      pushPageRoutName(context, navProvider);
       showTopMessage(
           context: context,
           customBar: CustomSnackBar.success(
@@ -216,7 +215,7 @@ class ProductCubit extends Cubit<ProductState> {
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       emit(state.copyWith(deleteProductState: RequestState.loaded));
-      HomeCubit.get(context).getHomeProvider(context: context);
+      // HomeCubit.get(context).getHomeProvider(context: context);
     } else {
       pop(context);
       emit(state.copyWith(deleteProductState: RequestState.error));
@@ -224,21 +223,6 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
 //** update product
-  Future getDataProductForUpdate(int categoryId, String sizes, String colors,
-      String images, discount) async {
-
-    emit(state.copyWith(getDataForUpdateState: RequestState.loading));
-    CategoryModel categoryModel =
-        categories.firstWhere((element) => element.id == categoryId,orElse:()=>categories[0]);
-
-    List<String> newImges = images.split("#");
-    emit(state.copyWith(getDataForUpdateState: RequestState.loaded,
-        categoryModel: categoryModel,
-        colors: colors,
-        sizes: sizes,
-        images: newImges,
-        discount: discount));
-  }
 
   Future updateProduct(Product product, context) async {
     showUpdatesLoading(context);
@@ -265,8 +249,8 @@ class ProductCubit extends Cubit<ProductState> {
     }
     if (response.statusCode == 200) {
       pop(context);
-      pop(context);
-      // pushPageRoutName(context, navProvider);
+      // pop(context);
+      pushPageRoutName(context, navProvider);
       showTopMessage(
           context: context,
           customBar: CustomSnackBar.success(
@@ -276,12 +260,30 @@ class ProductCubit extends Cubit<ProductState> {
                 fontFamily: AppFonts.caM, fontSize: 16, color: Colors.white),
           ));
       emit(state.copyWith(updateProductState: RequestState.loaded, images: []));
-      HomeCubit.get(context).getHomeProvider(context: context);
+      // HomeCubit.get(context).getHomeProvider(context: context);
       // ProviderCubit.get(context).getProductsByProviderId(page: 1,providerId: currentProvider!.id);
     } else {
       emit(state.copyWith(updateProductState: RequestState.error));
     }
   }
+
+
+  Future getDataProductForUpdate(int categoryId, String sizes, String colors,
+      String images, discount) async {
+
+    emit(state.copyWith(getDataForUpdateState: RequestState.loading));
+    CategoryModel categoryModel =
+        categories.firstWhere((element) => element.id == categoryId,orElse:()=>categories[0]);
+
+    List<String> newImges = images.split("#");
+    emit(state.copyWith(getDataForUpdateState: RequestState.loaded,
+        categoryModel: categoryModel,
+        colors: colors,
+        sizes: sizes,
+        images: newImges,
+        discount: discount));
+  }
+
 
   changeCurrentPageSlider(int newIndex) {
     emit(state.copyWith(currentPageSlider: newIndex));

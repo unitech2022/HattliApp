@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
+import 'package:hatlli/core/layout/app_fonts.dart';
 import 'package:hatlli/core/utils/app_model.dart';
+import 'package:hatlli/core/widgets/circular_progress.dart';
+import 'package:hatlli/core/widgets/texts.dart';
 import 'package:hatlli/meduls/common/bloc/order_cubit/order_cubit.dart';
 
 import '../../../../../core/helpers/helper_functions.dart';
@@ -38,6 +42,15 @@ class _TrackingOrderScreenState extends State<TrackingOrderScreen> {
     controllerMap!
         .animateCamera(CameraUpdate.newCameraPosition(cPosition))
         .then((value) {});
+  }
+
+  final _controllerPrice = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controllerPrice.dispose();
   }
 
   @override
@@ -83,7 +96,7 @@ class _TrackingOrderScreenState extends State<TrackingOrderScreen> {
                 polylines: OrderCubit.get(context).polylinePoints,
                 onMapCreated: (controller) {
                   controllerMap = controller;
-                   controllerMap!.setMapStyle(styleMap);
+                  controllerMap!.setMapStyle(styleMap);
                   if (!_controller.isCompleted)
                     _controller.complete(controller);
                 },
@@ -100,11 +113,21 @@ class _TrackingOrderScreenState extends State<TrackingOrderScreen> {
                                     state.orderDetailsResponse!.order!.status]
                                 .tr(),
                             onPressed: () {
-                              OrderCubit.get(context).updateOrder(
-                                  state.orderDetailsResponse!.order!.status + 1,
-                                  state.orderDetailsResponse!.order!.id,
-                                  1,
-                                  context: context);
+                              if (state.orderDetailsResponse!.order!.status ==
+                                      0 &&
+                                  state.orderDetailsResponse!.order!.type ==
+                                      1 &&
+                                  currentUser.role == AppModel.providerRole) {
+                                confirmManualOrder(context,
+                                    state.orderDetailsResponse!.order!.id);
+                              } else {
+                                OrderCubit.get(context).updateOrder(
+                                    state.orderDetailsResponse!.order!.status +
+                                        1,
+                                    state.orderDetailsResponse!.order!.id,
+                                    1,
+                                    context: context);
+                              }
                             }),
                       ),
                     ),
@@ -164,6 +187,112 @@ class _TrackingOrderScreenState extends State<TrackingOrderScreen> {
       },
       listener: (BuildContext context, OrderState state) {
         if (state.getlinsMapState == RequestState.loaded) {}
+      },
+    );
+  }
+
+  Future<dynamic> confirmManualOrder(BuildContext context, orderId) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return BlocBuilder<OrderCubit, OrderState>(
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: Container(
+                  width: double.infinity,
+                  // height: heightScreen(context) / 1.5,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15)),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // sizedHeight(15),
+                      Row(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                pop(context);
+                              },
+                              icon: Icon(Icons.close, color: Colors.black))
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Texts(
+                            title: "اكتب السعر".tr(),
+                            textColor: Colors.black,
+                            size: 20,
+                            widget: FontWeight.bold,
+                            family: AppFonts.taB,
+                          ),
+                        ],
+                      ),
+
+                      sizedHeight(20),
+
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(color: Colors.black38, width: .8)),
+                        child: TextField(
+                          controller: _controllerPrice,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          decoration: InputDecoration(
+                              hintText: "اكتب سعر الطلب  + قيمة التوصيل".tr(),
+                              hintStyle: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                  fontFamily: AppFonts.taM),
+                              border: InputBorder.none),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      state.updateOrderState == RequestState.loading
+                          ? CustomCircularProgress(
+                              size: Size(30, 30),
+                              strokeWidth: 4,
+                            )
+                          : CustomButton(
+                              onPressed: () {
+                                OrderCubit.get(context)
+                                    .confirmManualOrder(
+                                        _controllerPrice.text.trim(), orderId,
+                                        context: context)
+                                    .then((value) {
+                                  pop(context);
+                                  _controllerPrice.clear();
+                                });
+                              },
+                              title: 'ارسال'.tr(),
+                            ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }

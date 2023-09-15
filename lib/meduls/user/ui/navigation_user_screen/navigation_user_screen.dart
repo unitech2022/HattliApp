@@ -218,7 +218,10 @@ class _NavigationUserScreenState extends State<NavigationUserScreen> {
       // NotifyAowsome(notification!.title!,notification.body!);
       if (notification != null && android != null && !kIsWeb) {
         // print("tokrrrrrrnseneeeeee");
-        HomeCubit.get(context).getHomeUser(context: context, isStat: false);
+
+        if(currentUser.role==AppModel.userRole){
+          HomeCubit.get(context).getHomeUser(context: context, isStat: false);
+        }
 
         AwesomeNotifications().createNotification(
             content: NotificationContent(

@@ -441,6 +441,7 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                                     Provider provider = Provider(
                                         id: widget.providerId,
                                         area: state.area!,
+                                        password: "",
                                         iBan: _controllerIBanBank.text,
                                         nameBunk: _controllerNameBank.text,
                                         categoryId: state.categoryModel!.id,
@@ -457,6 +458,8 @@ class _EditAccountProviderScreenState extends State<EditAccountProviderScreen> {
                                         lng: 0,
                                         rate: 0,
                                         status: 0,
+                                        manualOrder: state.detailsProviderResponse!
+                                            .provider!.manualOrder,
                                         discount: 0,
                                         distance: 0,
                                         wallet: state.detailsProviderResponse!

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/utils/utils.dart';
+import 'package:hatlli/meduls/common/models/manual_order.dart';
 import 'package:hatlli/meduls/user/bloc/cart_cubit/cart_cubit.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import '../../../../core/enums/loading_status.dart';
@@ -76,6 +77,80 @@ class OrderCubit extends Cubit<OrderState> {
       emit(state.copyWith(addOrderState: RequestState.error));
     }
   }
+
+
+// ** add manual order
+  Future addManualOrder(ManualOrder order, {context}) async {
+    showUpdatesLoading(context);
+    emit(state.copyWith(addOrderState: RequestState.loading));
+    var headers = {'Authorization': token};
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('${ApiConstants.baseUrl}/orders/add-manual-order'));
+
+    request.fields.addAll({
+      'totalCost':"0",
+      'providerId':order.providerId.toString(),
+      'UserId': currentUser.id!,
+      'desc':order.desc
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    if (kDebugMode) {
+      print("${response.statusCode} ======> addManualOrder");
+    }
+    if (response.statusCode == 200) {
+      pop(context);
+      CartCubit.get(context).cartsFound.clear();
+      pushPageRoutName(context, navUser);
+      showDialogSuccess(context: context, message: "تم ارسال الطلب بنجاح".tr());
+      emit(state.copyWith(addOrderState: RequestState.loaded));
+      // await getCarts(isState: false);
+    } else {
+      pop(context);
+      emit(state.copyWith(addOrderState: RequestState.error));
+    }
+  }
+
+// ** confirm manual order
+  Future confirmManualOrder(price, id,  {context}) async {
+
+    emit(state.copyWith(updateOrderState: RequestState.loading));
+    var headers = {'Authorization': token};
+    var request = http.MultipartRequest(
+        'PUT', Uri.parse('${ApiConstants.baseUrl}/orders/confirm-manual-Order'));
+    request.fields.addAll({
+      'orderId': id.toString(),
+      'price': price.toString(),
+     
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    if (kDebugMode) {
+      print("${response.statusCode} ======> confirm-manual-Order");
+    }
+    if (response.statusCode == 200) {
+      
+
+      showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.success(
+            backgroundColor: Colors.green,
+            message: textOrderStatus[1].tr(),
+            textStyle: const TextStyle(
+                fontFamily: "font", fontSize: 16, color: Colors.white),
+          ));
+      getOrderDetails(id);
+      emit(state.copyWith(updateOrderState: RequestState.loaded));
+      // getCarts(isState: false);
+    } else {
+      emit(state.copyWith(updateOrderState: RequestState.error));
+    }
+  }
+
 
 // ** update order
 

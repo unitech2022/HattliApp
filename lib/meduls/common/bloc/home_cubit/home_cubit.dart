@@ -15,6 +15,7 @@ import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/utils/utils.dart';
 import 'package:hatlli/meduls/common/models/category.dart';
+import 'package:hatlli/meduls/common/models/current_user.dart';
 import 'package:hatlli/meduls/common/models/order.dart';
 import 'package:hatlli/meduls/common/ui/map_screen/map_screen.dart';
 import 'package:hatlli/meduls/provider/models/home_provider_response.dart';
@@ -101,8 +102,8 @@ class HomeCubit extends Cubit<HomeState> {
 
         HomeUserResponse homeUserResponse = HomeUserResponse.fromJson(jsonData);
         categories = homeUserResponse.categories!;
-        // currentProvider = homeUserResponse!.user;
-        // categories = homeResponseProvider.categories!;
+
+       currentAddress = homeUserResponse.address!;;
 
         if (homeUserResponse.address == null && isLogin()) {
           pushPage(
@@ -119,18 +120,22 @@ class HomeCubit extends Cubit<HomeState> {
                   ? homeUserResponse.address!.lng
                   : locData.longitude);
         }
+        if (isLogin()) {
+          updateDeviceToken(
+              userId: currentUser.id, token: AppModel.deviceToken);
+          currentUser.status = homeUserResponse.user!.status;
+          print(currentUser.status.toString() + " abcdefg");
+        }
 
         emit(state.copyWith(
             getHomeUserState: RequestState.loaded,
             userModel: homeUserResponse.user,
             homeUserResponse: homeUserResponse,
             providers: homeUserResponse.providers,
+            currentIndexTap: 0,
             orders: homeUserResponse.orders!
                 .where((element) => element.order.status == 0)
                 .toList()));
-        if (isLogin())
-          updateDeviceToken(
-              userId: currentUser.id, token: AppModel.deviceToken);
       } else {
         emit(state.copyWith(getHomeUserState: RequestState.error));
       }
@@ -365,8 +370,8 @@ class HomeCubit extends Cubit<HomeState> {
   //** provider functions */ ==============================================================
 
   // ** get home provider
-  Future getHomeProvider({context, isState = true,isFirst=false}) async {
-
+  Future getHomeProvider({context, isState = true, isFirst = false}) async {
+    ProviderCubit.get(context).products = [];
     bool hasInternetResult = await hasInternet();
     if (isState)
       emit(state.copyWith(getHomeProviderState: RequestState.loading));
@@ -390,25 +395,18 @@ class HomeCubit extends Cubit<HomeState> {
 
         currentProvider = homeResponseProvider.provider;
         categories = homeResponseProvider.categories!;
-
+        updateDeviceToken(userId: currentUser.id, token: AppModel.deviceToken);
         emit(state.copyWith(
             getHomeProviderState: RequestState.loaded,
             homeResponseProvider: homeResponseProvider,
+            currentIndexTap: 0,
             orders: homeResponseProvider.orders!
                 .where((element) => element.order.status == 0)
                 .toList()));
-
-        updateDeviceToken(userId: currentUser.id, token: AppModel.deviceToken);
-      } else if (response.statusCode == 404) {
-
-        emit(state.copyWith(getHomeProviderState: RequestState.loaded));
-
       } else {
-
         emit(state.copyWith(getHomeProviderState: RequestState.error));
       }
     } else {
-
       emit(state.copyWith(getHomeProviderState: RequestState.noInternet));
     }
   }
@@ -498,7 +496,7 @@ class HomeCubit extends Cubit<HomeState> {
 
 // Todo : refactor
   updateDeviceToken({userId, token, context}) async {
-    emit(state.copyWith(updateDeviceTokenState: RequestState.loading));
+    // emit(state.copyWith(updateDeviceTokenState: RequestState.loading));
     // var headers = {'Authorization': currentUser.token!};
     var request = http.MultipartRequest(
         'POST', Uri.parse(ApiConstants.updateDeviceTokenPath));
@@ -509,10 +507,10 @@ class HomeCubit extends Cubit<HomeState> {
       print("updateDeviceToken = : -${response.statusCode}");
     }
     if (response.statusCode == 200) {
-      emit(state.copyWith(updateDeviceTokenState: RequestState.loaded));
+      // emit(state.copyWith(updateDeviceTokenState: RequestState.loaded));
     } else {
       // print("updateDeviceToken = : -" + response.reasonPhrase.toString());
-      emit(state.copyWith(updateDeviceTokenState: RequestState.error));
+      // emit(state.copyWith(updateDeviceTokenState: RequestState.error));
     }
   }
 }

@@ -804,7 +804,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       : double.parse(_controllerPrice.text),
                                   discount: state.discount
                                       ? double.parse(_controllerDiscount.text)
-                                      : widget.product!.discount,
+                                      :0,
                                   status: widget.product!.status,
                                   rate: widget.product!.rate,
                                   createdAt: widget.product!.createdAt);

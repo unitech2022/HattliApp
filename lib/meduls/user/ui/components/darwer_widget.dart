@@ -51,9 +51,9 @@ class DrawerWidget extends StatelessWidget {
                       ItemDrawerWidget(
                         title: "الرئيسية".tr(),
                         onTap: () {
-                          HomeCubit.get(context)
-                              .changeCurrentIndexDrawer("الرئيسية".tr());
-                          pop(context);
+                          // HomeCubit.get(context)
+                          //     .changeCurrentIndexDrawer("الرئيسية".tr());
+                          // pop(context);
                           if (isLogin()) {
                             pushPageRoutName(
                                 context,
@@ -429,6 +429,8 @@ class DrawerWidget extends StatelessWidget {
               );
           
   }
+
+
 }
 
 class ItemDrawerWidget extends StatelessWidget {

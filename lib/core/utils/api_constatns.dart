@@ -2,10 +2,12 @@ class ApiConstants {
   // static const googleKey = "AIzaSyCHcAKXFZuQ8WhkAvW1zv3MTVibHU9EuF0";
 
 static const apiGoogleMapKey ="AIzaSyD6khcrjnt6bBk5TXIfbESW6GoprKc_knE";
-  // static const baseUrl = "https://7a63-154-183-196-139.ngrok-free.app";
- static const baseUrl = "https://hatli.sa";
+ // static const baseUrl = "https://3b67-197-38-50-204.ngrok-free.app";
+
+   static const baseUrl = "https://hatli.sa";
   static const baseUrlImages = "$baseUrl/images/";
   static const checkUserPath = "$baseUrl/check-username";
+ static const  deleteAccount = "$baseUrl/delete-account";
   static const loginPath = "$baseUrl/user-login";
   static const signUpPath = "$baseUrl/signup";
   static const uploadImagesPath = "$baseUrl/image/upload/image";
@@ -23,9 +25,6 @@ static const apiGoogleMapKey ="AIzaSyD6khcrjnt6bBk5TXIfbESW6GoprKc_knE";
   static const getTripsPath = "$baseUrl/trips/add-trip";
   static const addNewAddress = "$baseUrl/address/add-address";
    static const getProductsByProviderId = "$baseUrl//product/get-Products-By-providerId-page?";
-
-  // static const addNewAddress = "$baseUrl/cities/search_city?";
-
   static const getFavoritesPath = "$baseUrl/Favorite/get-favorites?";
   static String imageUrl(path) => baseUrlImages + path;
 
