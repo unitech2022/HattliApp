@@ -12,6 +12,7 @@ import '../../../../core/utils/strings.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/texts.dart';
 import 'dart:ui' as ui;
+
 class OtpScreen extends StatefulWidget {
   final String phoneNumber;
   final String codeSend;
@@ -61,16 +62,13 @@ class _OtpScreenState extends State<OtpScreen> {
                   height: 58,
                 ),
                 Expanded(
-                    child: Card(
-                  elevation: 25,
+                    child: Container(
                   margin: const EdgeInsets.only(top: 15),
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.white70, width: 1),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(44.0),
-                      topRight: Radius.circular(44.0),
-                    ),
-                  ),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(44.0),
+                    topRight: Radius.circular(44.0),
+                  )),
                   child: SingleChildScrollView(
                     child: Container(
                       padding: const EdgeInsets.only(
@@ -80,7 +78,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                       width: double.infinity,
                       child: Column(children: [
-                         Texts(
+                        Texts(
                             title: Strings.verCode.tr(),
                             family: AppFonts.taB,
                             size: 20,
@@ -89,7 +87,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         const SizedBox(
                           height: 15,
                         ),
-                         Texts(
+                        Texts(
                             title: Strings.verCodeDesc.tr(),
                             family: AppFonts.taM,
                             size: 14,
@@ -159,7 +157,6 @@ class _OtpScreenState extends State<OtpScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextButton(
-                              
                                 onPressed: () {
                                   // ** resent code
                                   if (state.timerCount == 0) {
@@ -169,12 +166,13 @@ class _OtpScreenState extends State<OtpScreen> {
                                         context: context);
                                   }
                                 },
-                                
-                                child:  Texts(
+                                child: Texts(
                                     title: Strings.reSend.tr(),
                                     family: AppFonts.taB,
                                     size: 14,
-                                    textColor:state.timerCount >0?Colors.grey: Color(0xff292626),
+                                    textColor: state.timerCount > 0
+                                        ? Colors.grey
+                                        : Color(0xff292626),
                                     widget: FontWeight.bold)),
                             SizedBox(
                               height: 5,
@@ -216,7 +214,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                       userName: widget.phoneNumber);
                                 } else {
                                   AuthCubit.get(context).userLogin(
-                                     code: code,
+                                      code: code,
                                       context: context,
                                       role: AppModel.providerRole,
                                       userName: widget.phoneNumber);

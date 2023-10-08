@@ -2,21 +2,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hatlli/core/enums/loading_status.dart';
-
 import 'package:hatlli/core/extension/theme_extension.dart';
 import 'package:hatlli/core/layout/palette.dart';
 import 'package:hatlli/core/layout/screen_size.dart';
-import 'package:hatlli/meduls/common/bloc/auth_cubit/auth_cubit.dart';
 import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
 import 'package:hatlli/meduls/user/ui/account_screen/update_profile_screen.dart';
 import 'package:hatlli/meduls/user/ui/components/login_widget.dart';
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/app_radius.dart';
-
 import '../../../../core/utils/api_constatns.dart';
-import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/texts.dart';
 import '../home_user_screen/home_user_screen.dart';
 

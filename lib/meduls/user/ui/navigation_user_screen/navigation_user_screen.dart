@@ -249,6 +249,7 @@ class _NavigationUserScreenState extends State<NavigationUserScreen> {
       }
     });
   }
+
 }
 
 class MenuIconWidget extends StatelessWidget {

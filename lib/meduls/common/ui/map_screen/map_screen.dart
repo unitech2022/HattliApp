@@ -20,11 +20,11 @@ import '../../models/address_model.dart';
 
 class MapScreen extends StatefulWidget {
   final int type;
-   AddressModel? addressModel;
+  final AddressModel? addressModel;
 
-   MapScreen({
+  MapScreen({
     required this.type,
-     this.addressModel,
+    this.addressModel,
   });
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(locData.latitude!, locData.longitude!),
@@ -56,15 +56,15 @@ class _MapScreenState extends State<MapScreen> {
           context: context,
           newLat: widget.addressModel!.lat,
           newLng: widget.addressModel!.lng);
-      AddressCubit.get(context).detailsAddress == widget.addressModel!.description;
-      _controllerName.text = widget.addressModel!.name != null
-          ? widget.addressModel!.name!
-          : "";
-    }else{
-       AddressCubit.get(context).initMap(
+      AddressCubit.get(context).detailsAddress ==
+          widget.addressModel!.description;
+      _controllerName.text =
+          widget.addressModel!.name != null ? widget.addressModel!.name! : "";
+    } else {
+      AddressCubit.get(context).initMap(
           context: context,
-          newLat:locData.latitude??0.0,
-          newLng:locData.longitude??0.0);
+          newLat: locData.latitude ?? 0.0,
+          newLng: locData.longitude ?? 0.0);
     }
   }
 
@@ -124,7 +124,7 @@ class _MapScreenState extends State<MapScreen> {
                             ? widget.addressModel!.lat
                             : locData.latitude,
                         currentLng: widget.addressModel != null
-                            ?widget.addressModel!.lng
+                            ? widget.addressModel!.lng
                             : locData.longitude);
                   },
                 ),
@@ -133,6 +133,7 @@ class _MapScreenState extends State<MapScreen> {
               //   child: Icon(Icons.location_pin,
               //       color: Palette.mainColor, size: 55),
               // ),
+
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -223,7 +224,6 @@ class _MapScreenState extends State<MapScreen> {
                             //   ),
                             //   onChanged: (v) {},
                             // ),
-                         
                           ],
                         ),
                       ),
@@ -238,7 +238,8 @@ class _MapScreenState extends State<MapScreen> {
                                     AddressModel addressModel = AddressModel(
                                         defaultAddress: false,
                                         lat: AddressCubit.get(context).lat,
-                                        description: AddressCubit.get(context).detailsAddress,
+                                        description: AddressCubit.get(context)
+                                            .detailsAddress,
                                         lng: AddressCubit.get(context).lng);
                                     Navigator.of(context).pop(addressModel);
                                   }
@@ -248,7 +249,8 @@ class _MapScreenState extends State<MapScreen> {
                                     AddressModel addressModel = AddressModel(
                                       defaultAddress: false,
                                       lat: AddressCubit.get(context).lat,
-                                      description:AddressCubit.get(context).detailsAddress,
+                                      description: AddressCubit.get(context)
+                                          .detailsAddress,
                                       name: _controllerName.text.isEmpty
                                           ? ""
                                           : _controllerName.text,
@@ -269,7 +271,8 @@ class _MapScreenState extends State<MapScreen> {
                                     AddressModel addressModel = AddressModel(
                                       defaultAddress: false,
                                       lat: AddressCubit.get(context).lat,
-                                      description:AddressCubit.get(context).detailsAddress,
+                                      description: AddressCubit.get(context)
+                                          .detailsAddress,
                                       name: _controllerName.text.isEmpty
                                           ? ""
                                           : _controllerName.text,
@@ -362,23 +365,42 @@ class _MapScreenState extends State<MapScreen> {
                             textAlign: TextAlign.end,
                           )),
                           sizedWidth(20),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              height: 32,
-                              width: 32,
-                              decoration: BoxDecoration(
-                                color: Palette.mainColor,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child:
-                                    SvgPicture.asset("assets/icons/search.svg"),
-                              ),
+                          Container(
+                            height: 32,
+                            width: 32,
+                            decoration: BoxDecoration(
+                              color: Palette.mainColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child:
+                                  SvgPicture.asset("assets/icons/search.svg"),
                             ),
                           )
                         ])),
-                  ))
+                  )),
+              Positioned(
+                left: 20,
+                bottom: 200,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.my_location,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    controllerMap!.animateCamera(CameraUpdate.newLatLngZoom(
+                        LatLng(locData.latitude!, locData.longitude!), 14));
+
+                    AddressCubit.get(context).lat = locData.latitude!;
+                    AddressCubit.get(context).lng = locData.longitude!;
+
+                    AddressCubit.get(context).initMap(
+                        context: context,
+                        newLat: AddressCubit.get(context).lat,
+                        newLng: AddressCubit.get(context).lng);
+                  },
+                ),
+              )
             ],
           ),
         );
@@ -415,7 +437,7 @@ class _MapScreenState extends State<MapScreen> {
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       return false;
-    } 
+    }
     // else if (_controllertext.text.isEmpty) {
     //   showTopMessage(
     //       context: context,
@@ -427,7 +449,7 @@ class _MapScreenState extends State<MapScreen> {
     //       ));
     //   return false;
     // }
-     else {
+    else {
       return true;
     }
   }

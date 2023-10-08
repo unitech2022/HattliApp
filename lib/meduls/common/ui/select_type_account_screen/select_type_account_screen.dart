@@ -1,15 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' ;
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hatlli/core/animations/slide_transtion.dart';
 
-
 import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/layout/app_fonts.dart';
 import 'package:hatlli/core/layout/palette.dart';
-import 'package:hatlli/core/router/routes.dart' ;
+import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/widgets/custom_button.dart';
 import 'package:hatlli/core/widgets/texts.dart';
 import 'package:hatlli/meduls/common/bloc/auth_cubit/auth_cubit.dart';
@@ -40,16 +39,24 @@ class SelectTypeAccountScreen extends StatelessWidget {
                 ),
                 Expanded(
                     child: SingleChildScrollView(
-                  child: Card(
-                    elevation: 25,
-                    margin: const EdgeInsets.only(top: 15),
-                    shape: const RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 1),
+                  child: Container(
+                    // elevation: 25,
+
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(44.0),
                         topRight: Radius.circular(44.0),
                       ),
                     ),
+                    margin: const EdgeInsets.only(top: 15),
+                    // shape: const RoundedRectangleBorder(
+
+                    //   side: BorderSide(color: Colors.white70, width: 1),
+                    //   borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(44.0),
+                    //     topRight: Radius.circular(44.0),
+                    //   ),
+                    // ),
                     child: Container(
                       padding: const EdgeInsets.only(
                         top: 31,
@@ -58,7 +65,7 @@ class SelectTypeAccountScreen extends StatelessWidget {
                       ),
                       width: double.infinity,
                       child: Column(children: [
-                         Texts(
+                        Texts(
                             title: Strings.selectAccountType.tr(),
                             family: AppFonts.taB,
                             size: 20,
@@ -67,7 +74,7 @@ class SelectTypeAccountScreen extends StatelessWidget {
                         const SizedBox(
                           height: 15,
                         ),
-                         Texts(
+                        Texts(
                             title: Strings.selectAccountTypedesc.tr(),
                             family: AppFonts.taM,
                             size: 14,
@@ -107,10 +114,11 @@ class SelectTypeAccountScreen extends StatelessWidget {
                               onPressed: () {
                                 pushTranslationPage(
                                     context: context,
-                                    transtion:
-                                        FadTransition(page: LoginScreen(role:state.roleUser==0?AppModel.userRole:AppModel.providerRole)));
-
-                            
+                                    transtion: FadTransition(
+                                        page: LoginScreen(
+                                            role: state.roleUser == 0
+                                                ? AppModel.userRole
+                                                : AppModel.providerRole)));
                               }),
                         ),
                         const SizedBox(
@@ -120,7 +128,7 @@ class SelectTypeAccountScreen extends StatelessWidget {
                           onPressed: () {
                             pushPageRoutName(context, navUser);
                           },
-                          child:  Texts(
+                          child: Texts(
                               title: Strings.vistor.tr(),
                               family: AppFonts.taB,
                               size: 14,

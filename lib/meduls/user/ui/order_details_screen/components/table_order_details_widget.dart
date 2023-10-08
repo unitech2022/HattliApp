@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/meduls/common/models/order_response.dart';
 import '../../../../../core/layout/app_fonts.dart';
 import '../../../../../core/widgets/texts.dart';
@@ -37,6 +38,7 @@ class TableOrderDetailsWidget extends StatelessWidget {
               textColor: Color(0xff343434),
             )),
             DataColumn(
+
                 label: Texts(
                     title: "السعر".tr(),
                     family: AppFonts.taB,
@@ -52,11 +54,23 @@ class TableOrderDetailsWidget extends StatelessWidget {
           ],
           rows: list.map((e) =>
              DataRow(cells: [
-               DataCell(Texts(
-                  title: e.product!.name,
-                  family: AppFonts.taM,
-                  size: 13,
-                  textColor: Color(0xff343434))),
+               DataCell(
+                
+                SizedBox(
+                  width: widthScreen(context)/4.5,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Texts(
+                          title:e.product!.name,
+                          family: AppFonts.taM,
+                          size: 13,
+                          line: 2,
+                          textColor: Color(0xff343434)),
+                      ),
+                    ],
+                  ),
+                )),
                DataCell(Texts(
                   title: e.order!.quantity.toString(),
                   family: AppFonts.taM,

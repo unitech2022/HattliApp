@@ -2,9 +2,9 @@ class ApiConstants {
   // static const googleKey = "AIzaSyCHcAKXFZuQ8WhkAvW1zv3MTVibHU9EuF0";
 
 static const apiGoogleMapKey ="AIzaSyD6khcrjnt6bBk5TXIfbESW6GoprKc_knE";
- // static const baseUrl = "https://3b67-197-38-50-204.ngrok-free.app";
+  // static const baseUrl = "https://8547-197-38-26-30.ngrok-free.app";
 
-   static const baseUrl = "https://hatli.sa";
+ static const baseUrl = "https://hatli.sa";
   static const baseUrlImages = "$baseUrl/images/";
   static const checkUserPath = "$baseUrl/check-username";
  static const  deleteAccount = "$baseUrl/delete-account";

@@ -10,15 +10,16 @@ import 'package:hatlli/meduls/user/models/cart_model.dart';
 import 'package:moyasar/moyasar.dart';
 
 class PaymentMethodsConfirmed extends StatefulWidget {
-  final int total, type, productId, providerId,quntity;
- final String note;
+  final int total, type, productId, providerId, quntity;
+  final String note;
   PaymentMethodsConfirmed(
       {super.key,
       required this.total,
       this.type = 0,
       required this.productId,
-       required this.note,
-      required this.providerId, required this.quntity});
+      required this.note,
+      required this.providerId,
+      required this.quntity});
 
   @override
   State<PaymentMethodsConfirmed> createState() =>
@@ -31,9 +32,10 @@ class _PaymentMethodsConfirmedState extends State<PaymentMethodsConfirmed> {
   @override
   void initState() {
     super.initState();
+    print(widget.total);
     paymentConfig = PaymentConfig(
       publishableApiKey: 'pk_test_83UURo8Mjym2nc7jgxKhJLrVKrzgqNhogC5M4RoY',
-      amount: widget.total, // SAR 257.58
+      amount: widget.total * 100, // SAR 257.58
       description: 'order ',
       metadata: {'size': '250g'},
       // applePay: ApplePayConfig(merchantId: 'YOUR_MERCHANT_ID', label: 'ليموزين'),
@@ -44,8 +46,10 @@ class _PaymentMethodsConfirmedState extends State<PaymentMethodsConfirmed> {
     if (result is PaymentResponse) {
       switch (result.status) {
         case PaymentStatus.paid:
+          print(result.amount);
           if (widget.type == 0) {
-            OrderCubit.get(context).addOrder(1, context: context,nots:widget.note);
+            OrderCubit.get(context)
+                .addOrder(1, context: context, nots: widget.note);
           } else {
             CartModel cartModel = CartModel(
                 id: 0,
@@ -59,7 +63,8 @@ class _PaymentMethodsConfirmedState extends State<PaymentMethodsConfirmed> {
                 createdAt: "createdAt");
 
             CartCubit.get(context).addCart(cartModel).then((value) {
-              OrderCubit.get(context).addOrder(1, context: context,nots: "not");
+              OrderCubit.get(context)
+                  .addOrder(1, context: context, nots: "not");
             });
           }
 

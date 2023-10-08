@@ -97,7 +97,7 @@ class PaymentScreen extends StatelessWidget {
                             context,
                             PaymentMethodsConfirmed(
                               note:note,
-                              total: total.toInt() * 100 + 1,
+                              total: total.toInt() ,
                               productId: 0,
                               providerId: 0,
                               type: 0,

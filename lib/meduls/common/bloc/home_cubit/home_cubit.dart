@@ -15,7 +15,7 @@ import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/utils/utils.dart';
 import 'package:hatlli/meduls/common/models/category.dart';
-import 'package:hatlli/meduls/common/models/current_user.dart';
+
 import 'package:hatlli/meduls/common/models/order.dart';
 import 'package:hatlli/meduls/common/ui/map_screen/map_screen.dart';
 import 'package:hatlli/meduls/provider/models/home_provider_response.dart';
@@ -83,13 +83,15 @@ class HomeCubit extends Cubit<HomeState> {
 
 // ** get home User
   Future getHomeUser({context, isStat = true}) async {
+    // print(locData.latitude.toString() + "location");
+    String location = "${locData.latitude},${locData.longitude}";
     bool hasInternetResult = await hasInternet();
     if (isStat) emit(state.copyWith(getHomeUserState: RequestState.loading));
     if (hasInternetResult) {
       var request = http.Request(
           'GET',
           Uri.parse(
-              '${ApiConstants.baseUrl}/home/get-home-data?UserId=${currentUser.id}'));
+              '${ApiConstants.baseUrl}/home/get-home-data?UserId=${currentUser.id}&location=$location'));
 
       http.StreamedResponse response = await request.send();
 
@@ -102,8 +104,6 @@ class HomeCubit extends Cubit<HomeState> {
 
         HomeUserResponse homeUserResponse = HomeUserResponse.fromJson(jsonData);
         categories = homeUserResponse.categories!;
-
-       currentAddress = homeUserResponse.address!;;
 
         if (homeUserResponse.address == null && isLogin()) {
           pushPage(
@@ -121,6 +121,7 @@ class HomeCubit extends Cubit<HomeState> {
                   : locData.longitude);
         }
         if (isLogin()) {
+          currentAddress = homeUserResponse.address!;
           updateDeviceToken(
               userId: currentUser.id, token: AppModel.deviceToken);
           currentUser.status = homeUserResponse.user!.status;
