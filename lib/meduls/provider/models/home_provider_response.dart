@@ -13,6 +13,7 @@ class HomeResponseProvider {
   Provider? provider;
   UserModel? user;
   int? notiyCount;
+  
 
   HomeResponseProvider(
       {this.address,

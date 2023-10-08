@@ -3,13 +3,18 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<!--  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>-->
+ 
    <application
         android:label="هــاتلي"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
          <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCHcAKXFZuQ8WhkAvW1zv3MTVibHU9EuF0"/>
+           android:value="AIzaSyD6khcrjnt6bBk5TXIfbESW6GoprKc_knE"/>
+
+
+           <!-- Provide required visibility configuration for API level 30 and above -->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -37,4 +42,16 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <queries>
+  <!-- If your app checks for SMS support -->
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="sms" />
+  </intent>
+  <!-- If your app checks for call support -->
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="tel" />
+  </intent>
+</queries>
 </manifest>

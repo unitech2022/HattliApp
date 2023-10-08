@@ -10,7 +10,7 @@ static const String sendCode = "سيتم ارسال كود تحقق لتأكيد
  static const String theLogin ="الدخول";
 
  static const String verCode ="التحقق من الجوال";
-static const String verCodeDesc =" الرجاء ادخال كود التحقق الذي تم استلامة";
+static const String verCodeDesc ="الرجاء ادخال كود التحقق الذي تم استلامة";
 
 
   static const String descPlatform =

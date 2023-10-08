@@ -10,10 +10,12 @@ class CartState extends Equatable {
     final RequestState? minusQuantityState;
   final List<int> quantities;
   final List<double> prices;
+  final int quantity;
 
   const CartState(
       {this.addCartState,
       this.deleteCartState,
+      this.quantity=1,
       this.updateCartState,
         this.addQuantityState,
       this.minusQuantityState,
@@ -27,6 +29,7 @@ class CartState extends Equatable {
           final RequestState? deleteCartState,
           final RequestState? updateCartState,
           final RequestState? getCartsState,
+            final int? quantity,
           final CartResponse? cartResponse,
           final List<int>? quantities,
           final List<double>? prices,
@@ -35,6 +38,7 @@ class CartState extends Equatable {
           }) =>
       CartState(
         addCartState: addCartState ?? this.addCartState,
+          quantity: quantity ?? this.quantity,
         deleteCartState: deleteCartState ?? this.deleteCartState,
         updateCartState: updateCartState ?? this.updateCartState,
         getCartsState: getCartsState ?? this.getCartsState,
@@ -54,6 +58,7 @@ class CartState extends Equatable {
         getCartsState,
         prices,
         quantities,
+        quantity,
         minusQuantityState,
         addQuantityState
       ];

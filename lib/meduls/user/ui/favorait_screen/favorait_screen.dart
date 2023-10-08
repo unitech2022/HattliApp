@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart' as badges;
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/widgets/icon_alert_widget.dart';
 import 'package:hatlli/meduls/user/bloc/favoraite_cubit/favoraite_cubit.dart';
@@ -12,10 +12,10 @@ import '../../../../core/enums/loading_status.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/palette.dart';
 import '../../../../core/utils/api_constatns.dart';
+import '../../../../core/widgets/back_button.dart';
 import '../../../../core/widgets/circular_progress.dart';
 import '../../../../core/widgets/empty_list_widget.dart';
 import '../../../../core/widgets/texts.dart';
-import '../components/darwer_widget.dart';
 import '../product_details_screen/product_details_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  final scaffoldkey = GlobalKey<ScaffoldState>();
+  // final scaffoldkey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -38,22 +38,12 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldkey,
-      drawer: const DrawerWidget(),
+      // key: scaffoldkey,
+      // drawer: const DrawerWidget(),
       appBar: AppBar(
         backgroundColor: const Color(0xffFEFEFE),
         elevation: 0,
-        leading: GestureDetector(
-            onTap: () {
-              scaffoldkey.currentState!.openDrawer();
-            },
-            child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: SvgPicture.asset(
-                  "assets/icons/menu.svg",
-                  height: 17,
-                  width: 26,
-                ))),
+        leading:BackButtonWidget(),
         title: const Texts(
             title: "المفضلة",
             family: AppFonts.taB,

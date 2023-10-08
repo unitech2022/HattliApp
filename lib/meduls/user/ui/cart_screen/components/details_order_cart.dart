@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hatlli/meduls/user/models/cart_response.dart';
@@ -9,11 +10,26 @@ import '../../../../../core/widgets/icon_alert_widget.dart';
 import '../../../../../core/widgets/texts.dart';
 import '../../order_details_screen/components/details_order_widget.dart';
 
-class OrderDetailsCart extends StatelessWidget {
+class OrderDetailsCart extends StatefulWidget {
   final List<CartDetails> carts;
   final double total;
   OrderDetailsCart({super.key, required this.carts, required this.total});
+
+  @override
+  State<OrderDetailsCart> createState() => _OrderDetailsCartState();
+}
+
+class _OrderDetailsCartState extends State<OrderDetailsCart> {
   final scaffoldkey = GlobalKey<ScaffoldState>();
+ final _controllerDesc = TextEditingController();
+
+@override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+        _controllerDesc.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +44,8 @@ class OrderDetailsCart extends StatelessWidget {
               Icons.arrow_back,
               color: Colors.black,
             )),
-        title: const Texts(
-            title: "تفاصيل الطلب",
+        title:  Texts(
+            title: "تفاصيل الطلب".tr(),
             family: AppFonts.taB,
             size: 18,
             widget: FontWeight.bold),
@@ -70,10 +86,10 @@ class OrderDetailsCart extends StatelessWidget {
                       headingRowHeight: 45,
                       horizontalMargin: 0,
                       columnSpacing: 10,
-                      columns:  const [
+                      columns:   [
                         DataColumn(
                           label: Texts(
-                            title: "الصنف",
+                            title: "الصنف".tr(),
                             family: AppFonts.taB,
                             size: 12,
                             textColor: Color(0xff343434),
@@ -81,25 +97,25 @@ class OrderDetailsCart extends StatelessWidget {
                         ),
                         DataColumn(
                             label: Texts(
-                          title: "الكمية",
+                          title: "الكمية".tr(),
                           family: AppFonts.taB,
                           size: 12,
                           textColor: Color(0xff343434),
                         )),
                         DataColumn(
                             label: Texts(
-                                title: "السعر",
+                                title: "السعر".tr(),
                                 family: AppFonts.taB,
                                 size: 12,
                                 textColor: Color(0xff343434))),
                         DataColumn(
                             label: Texts(
-                                title: "اجمالي",
+                                title: "اجمالي".tr(),
                                 family: AppFonts.taB,
                                 size: 12,
                                 textColor: Color(0xff343434))),
                       ],
-                      rows: carts.map((e) =>   DataRow(cells: [
+                      rows: widget.carts.map((e) =>   DataRow(cells: [
                           DataCell(Texts(
                               title:e.product.name,
                               family: AppFonts.taM,
@@ -116,7 +132,7 @@ class OrderDetailsCart extends StatelessWidget {
                               size: 13,
                               textColor: Color(0xff343434))),
                           DataCell(Texts(
-                              title: "${e.cart.cost}SAR",
+                              title: "${e.cart.cost} SAR",
                               family: AppFonts.taM,
                               size: 13,
                               textColor: Color(0xff343434))),
@@ -134,22 +150,63 @@ class OrderDetailsCart extends StatelessWidget {
                 //** order Details */
                  DetailsOrderWidget(
                   type: 1,
-                  total :total
+                  total :widget.total + 2
                 )
                 //** ========== */
               ]),
             ),
             const SizedBox(
-              height: 37,
+              height: 17,
             ),
             //** button cancel  Order*/
+             
 
+                  //*** desc
+                  Container(
+                    padding: const EdgeInsets.only(
+                        right: 25, left: 18, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xfffefefe),
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xfff6f6f7)),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x0f000000),
+                          offset: Offset(1, 1),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _controllerDesc,
+                      keyboardType: TextInputType.multiline,
+                      style: const TextStyle(
+                          fontFamily: AppFonts.taM,
+                          fontSize: 14,
+                          color: Colors.black),
+                      maxLines: 8,
+                      decoration:  InputDecoration(
+                        hintText: "ضع تعليق".tr(),
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(
+                            fontFamily: AppFonts.caM,
+                            fontSize: 14,
+                            color: Color(0xff1D1D1D)),
+                      ),
+                    ),
+                  ),
+               
+
+ const SizedBox(
+              height: 37,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: CustomButton(
-                title: "تأكيد الطلب",
+                title: "تأكيد الطلب".tr(),
                 onPressed: () {
-                 pushPage(context, const PaymentScreen());
+                 pushPage(context,  PaymentScreen(total:widget.total,note:_controllerDesc.text.isNotEmpty?_controllerDesc.text:"not"));
                 },
                 backgroundColor: Colors.black,
               ),

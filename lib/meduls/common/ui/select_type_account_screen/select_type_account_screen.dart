@@ -1,6 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:hatlli/core/animations/slide_transtion.dart';
 
 import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/layout/app_fonts.dart';
@@ -9,8 +12,10 @@ import 'package:hatlli/core/router/routes.dart';
 import 'package:hatlli/core/widgets/custom_button.dart';
 import 'package:hatlli/core/widgets/texts.dart';
 import 'package:hatlli/meduls/common/bloc/auth_cubit/auth_cubit.dart';
+import 'package:hatlli/meduls/common/ui/login_screem/login_screen.dart';
 
 import '../../../../core/layout/app_assets.dart';
+import '../../../../core/utils/app_model.dart';
 import '../../../../core/utils/strings.dart';
 
 class SelectTypeAccountScreen extends StatelessWidget {
@@ -34,17 +39,25 @@ class SelectTypeAccountScreen extends StatelessWidget {
                 ),
                 Expanded(
                     child: SingleChildScrollView(
-                      child: Card(
-                                      elevation: 25,
-                                      margin: const EdgeInsets.only(top: 15),
-                                      shape: const RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.white70, width: 1),
+                  child: Container(
+                    // elevation: 25,
+
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(44.0),
                         topRight: Radius.circular(44.0),
                       ),
-                                      ),
-                                      child: Container(
+                    ),
+                    margin: const EdgeInsets.only(top: 15),
+                    // shape: const RoundedRectangleBorder(
+
+                    //   side: BorderSide(color: Colors.white70, width: 1),
+                    //   borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(44.0),
+                    //     topRight: Radius.circular(44.0),
+                    //   ),
+                    // ),
+                    child: Container(
                       padding: const EdgeInsets.only(
                         top: 31,
                         left: 22,
@@ -52,8 +65,8 @@ class SelectTypeAccountScreen extends StatelessWidget {
                       ),
                       width: double.infinity,
                       child: Column(children: [
-                        const Texts(
-                            title: Strings.selectAccountType,
+                        Texts(
+                            title: Strings.selectAccountType.tr(),
                             family: AppFonts.taB,
                             size: 20,
                             textColor: Colors.black,
@@ -61,8 +74,8 @@ class SelectTypeAccountScreen extends StatelessWidget {
                         const SizedBox(
                           height: 15,
                         ),
-                        const Texts(
-                            title: Strings.selectAccountTypedesc,
+                        Texts(
+                            title: Strings.selectAccountTypedesc.tr(),
                             family: AppFonts.taM,
                             size: 14,
                             textColor: Color(0xff44494E),
@@ -77,17 +90,17 @@ class SelectTypeAccountScreen extends StatelessWidget {
                               onTap: () {
                                 AuthCubit.get(context).selectRoleAccount(0);
                               },
-                              title: Strings.user,
+                              title: Strings.user.tr(),
                               image: AppAssets.imageUser,
-                              cheked:state.roleUser==0? true:false,
+                              cheked: state.roleUser == 0 ? true : false,
                             ),
                             ContainerTypeAccount(
                               onTap: () {
-                                 AuthCubit.get(context).selectRoleAccount(1);
+                                AuthCubit.get(context).selectRoleAccount(1);
                               },
-                              title: Strings.provider,
+                              title: Strings.provider.tr(),
                               image: AppAssets.imageProvider,
-                              cheked: state.roleUser==1? true:false,
+                              cheked: state.roleUser == 1 ? true : false,
                             )
                           ],
                         ),
@@ -97,27 +110,38 @@ class SelectTypeAccountScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: CustomButton(
-                              title: Strings.next,
+                              title: Strings.next.tr(),
                               onPressed: () {
-                                pushPageRoutName(context, login);
+                                pushTranslationPage(
+                                    context: context,
+                                    transtion: FadTransition(
+                                        page: LoginScreen(
+                                            role: state.roleUser == 0
+                                                ? AppModel.userRole
+                                                : AppModel.providerRole)));
                               }),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 5,
                         ),
-                        const Texts(
-                            title: Strings.vistor,
-                            family: AppFonts.taB,
-                            size: 14,
-                            textColor: Color(0xff292626),
-                            widget: FontWeight.bold),
-                             const SizedBox(
+                        TextButton(
+                          onPressed: () {
+                            pushPageRoutName(context, navUser);
+                          },
+                          child: Texts(
+                              title: Strings.vistor.tr(),
+                              family: AppFonts.taB,
+                              size: 14,
+                              textColor: Color(0xff292626),
+                              widget: FontWeight.bold),
+                        ),
+                        const SizedBox(
                           height: 250,
                         ),
                       ]),
-                                      ),
-                                    ),
-                    ))
+                    ),
+                  ),
+                ))
               ],
             ));
       },
@@ -163,7 +187,7 @@ class ContainerTypeAccount extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 15),
                   child: Checkbox(
-                    side: BorderSide.none,
+                      side: BorderSide.none,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5)),
                       fillColor: MaterialStateProperty.resolveWith((states) {

@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.4+4
 
 environment:
   sdk: '>=2.19.6 <3.0.0'
@@ -37,17 +37,18 @@ dependencies:
   cupertino_icons: ^1.0.2
   easy_localization: ^3.0.1
   flutter_phoenix: ^1.0.0
-
+  animated_bottom_navigation_bar: ^1.2.0
   shared_preferences: ^2.0.17
   # google_maps_flutter_platform_interface: ^2.2.6
   # google_maps_flutter_android: ^2.4.10
   # google_maps_flutter: ^2.2.5
   flutter_svg: ^2.0.5
-  dio: ^5.1.1
+  # dio: ^5.1.1
   get_it: ^7.2.0
+  get: ^4.6.5
   shimmer: ^2.0.0
   image_picker: ^0.8.7+5
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.0
   flutter_rating_bar: ^4.0.1
   carousel_slider: ^4.2.1
   location: ^4.4.0
@@ -74,9 +75,20 @@ dependencies:
   quiver: ^3.2.1
   firebase_core: ^2.14.0
   firebase_messaging: ^14.6.4
-  # awesome_notifications: ^0.7.4+1
+  awesome_notifications: ^0.7.4+1
   flutter_local_notifications: ^9.4.1
   flutter_launcher_icons: ^0.13.1
+  photo_view: ^0.14.0
+  font_awesome_flutter: ^10.1.0
+  url_launcher: ^6.0.7
+  flutter_html: ^3.0.0-alpha.6
+  moyasar: ^2.0.0
+  pdf: ^3.10.4
+  printing: ^5.11.0
+  flutter_launch: ^0.3.0
+  google_places_flutter: ^2.0.6
+  infinite_scroll_pagination: ^4.0.0
+
   # flutter_app_name: any
 
 dev_dependencies:

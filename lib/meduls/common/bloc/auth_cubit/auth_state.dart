@@ -3,6 +3,7 @@ part of 'auth_cubit.dart';
 class AuthState extends Equatable {
   // register
   final RequestState? registerUserState;
+  final RequestState? deleteAccountState;
   final ResponseRegister? responseRegister;
 
   // login
@@ -10,6 +11,7 @@ class AuthState extends Equatable {
   final RequestState? loginUserState;
   //check
   final RequestState? checkUserState;
+   final RequestState? resendCodeState;
   final int roleUser;
 
 
@@ -25,18 +27,22 @@ class AuthState extends Equatable {
   final String? imageLogo;
     final RequestState? imagePassState;
   final String? imagePass;
+  final int  timerCount;
 
   const AuthState(
       {this.registerUserState,
       this.responseRegister,
+        this.deleteAccountState,
       this.checkUserState,
       this.userResponseModel,
       this.errorImageMessage,
       this.image,
+      this.timerCount=60,
       this.imageState,
       this.roleUser = 0,
       this.loginUserState
-      ,this.createProviderState,
+      ,this.createProviderState
+       ,this.resendCodeState,
       this.imageLogoState,
       this.imageLogo ,
       this.imagePassState,
@@ -50,10 +56,12 @@ class AuthState extends Equatable {
       final userResponseModel,
       final checkUserState,
       final int? roleUser,
+        final RequestState? deleteAccountState,
       final errorImageMessage,
       final image,
       final imageState,
-      // final currentGender,
+      final int?  timerCount,
+         final RequestState? resendCodeState,
       final loginUserState
       , final RequestState? createProviderState,
     final RequestState? imageLogoState,
@@ -63,8 +71,10 @@ class AuthState extends Equatable {
       
       }) {
     return AuthState(
+        deleteAccountState: deleteAccountState ?? this.deleteAccountState,
         checkUserState: checkUserState ?? this.checkUserState,
-        //   currentCountry: currentCountry ?? this.currentCountry,
+        resendCodeState: resendCodeState ?? this.resendCodeState,
+         timerCount: timerCount ?? this.timerCount,
         registerUserState: registerUserState ?? this.registerUserState,
         responseRegister: responseRegister ?? this.responseRegister,
         userResponseModel: userResponseModel ?? this.userResponseModel,
@@ -85,6 +95,9 @@ class AuthState extends Equatable {
 
   @override
   List<Object?> get props => [
+    deleteAccountState,
+    timerCount,
+    resendCodeState,
         registerUserState,
         responseRegister,
         loginUserState,

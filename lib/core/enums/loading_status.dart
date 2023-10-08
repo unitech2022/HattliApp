@@ -15,7 +15,8 @@ enum RequestState {
   loading ,
   loaded,
   error,
-  pagination 
+  noInternet 
+
 }
 
 class GetDataFlow extends Equatable {

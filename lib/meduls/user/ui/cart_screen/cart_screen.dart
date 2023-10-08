@@ -1,14 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart' as badges;
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:hatlli/core/enums/loading_status.dart';
 import 'package:hatlli/core/utils/api_constatns.dart';
 import 'package:hatlli/core/widgets/custom_button.dart';
 import '../../../../core/helpers/helper_functions.dart';
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/palette.dart';
+import '../../../../core/widgets/back_button.dart';
 import '../../../../core/widgets/circular_progress.dart';
 import '../../../../core/widgets/empty_list_widget.dart';
 import '../../../../core/widgets/icon_alert_widget.dart';
@@ -37,20 +39,14 @@ class _CartsScreenState extends State<CartsScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
-        return Scaffold(
+        return  state.getCartsState == RequestState.loaded
+              ?  Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: GestureDetector(
-                onTap: () {
-                  pop(context);
-                },
-                child: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                )),
-            title: const Texts(
-                title: "سلة المشتريات",
+            leading:BackButtonWidget(),
+            title:  Texts(
+                title: "سلة المشتريات".tr(),
                 family: AppFonts.taB,
                 size: 18,
                 widget: FontWeight.bold),
@@ -72,7 +68,7 @@ class _CartsScreenState extends State<CartsScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: CustomButton(
-                  title: "إتمام الطلب",
+                  title: "إتمام الطلب".tr(),
                   onPressed: () {
                     pushPage(context, OrderDetailsCart(carts:state.cartResponse!.carts!,total:CartCubit.get(context).total));
                   },
@@ -81,9 +77,8 @@ class _CartsScreenState extends State<CartsScreen> {
               )
             ]),
           ),
-          body: state.getCartsState == RequestState.loaded
-              ?state.cartResponse!.carts!.isEmpty?
-              const EmptyListWidget(message:  "لا توجد منتجات في السلة ",)
+          body:state.cartResponse!.carts!.isEmpty?
+               EmptyListWidget(message:  "لا توجد منتجات في السلة ".tr(),)
               
                  : ListView.builder(
                   itemCount: state.cartResponse!.carts!.length,
@@ -108,8 +103,12 @@ class _CartsScreenState extends State<CartsScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
+                                width: 80,
+                                height: 100,
+                                fit: BoxFit.cover,
                                   imageUrl: ApiConstants.imageUrl(
-                                      cart.product.images.split("#")[0])),
+                                      cart.product.images.split("#")[0]),errorWidget: (context, url, error) => Image.asset("assets/images/logo_black.png",width: 100,
+                                height: 100,),),
                             ),
                           ),
                           const SizedBox(
@@ -141,7 +140,7 @@ class _CartsScreenState extends State<CartsScreen> {
                                   ),
                                   Texts(
                                     title:
-                                        "${CartCubit.get(context).prices[index].toString()} SAR",
+                                        "${CartCubit.get(context).prices[cart.product.id].toString()} SAR",
                                     family: AppFonts.taM,
                                     size: 13,
                                     height: .8,
@@ -184,58 +183,55 @@ class _CartsScreenState extends State<CartsScreen> {
                               ),
                               //*** quantity  */
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  GestureDetector(
-                                    onTap: () {
+                                  MaterialButton(
+                                    
+                                    minWidth:0,
+                                    color: Palette.mainColor,
+                                    padding: EdgeInsets.all(5),
+                                    shape:CircleBorder(),
+                                    height: 22,
+                                    onPressed: () {
                                       CartCubit.get(context).add(index,
-                                          cart.product.price, cart.cart.id);
+                                          cart.product.price, cart.cart.id,cart.product.id);
                                     },
-                                    child: Container(
-                                      height: 22,
-                                      width: 22,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Palette.mainColor,
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.add,
-                                          size: 15,
-                                          color: Colors.white,
-                                        ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 15,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
                                   const SizedBox(
-                                    width: 12,
+                                    width: 5,
                                   ),
                                   Texts(
                                       title: CartCubit.get(context)
-                                          .quantities[index]
+                                          .quantitiesMap[cart.product.id]
                                           .toString(),
                                       family: AppFonts.moM,
                                       size: 15),
                                   const SizedBox(
-                                    width: 12,
+                                    width: 5,
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
+                                 MaterialButton(
+                                    
+                                    minWidth:0,
+                                    color: Palette.mainColor,
+                                    padding: EdgeInsets.all(5),
+                                    shape:CircleBorder(),
+                                    height: 22,
+                                    onPressed: () {
                                       CartCubit.get(context).mins(index,
-                                          cart.product.price, cart.cart.id);
+                                          cart.product.price, cart.cart.id,cart.product.id);
                                     },
-                                    child: Container(
-                                      height: 22,
-                                      width: 22,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Palette.mainColor,
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.remove,
-                                          size: 15,
-                                          color: Colors.white,
-                                        ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 15,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -246,15 +242,15 @@ class _CartsScreenState extends State<CartsScreen> {
                         ],
                       ),
                     );
-                  })
-              : const Center(
+                  })) : const Center(
                   child: CustomCircularProgress(
-                    fullScreen: false,
+                    fullScreen: true,
                     strokeWidth: 4,
                     size: Size(50, 50),
                   ),
-                ),
-        );
+                );
+      
+             
       },
     );
   }

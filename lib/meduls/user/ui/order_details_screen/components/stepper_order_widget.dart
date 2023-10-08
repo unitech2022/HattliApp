@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class StepperOrderWidget extends StatelessWidget {
                backgroundColor:statuse >=0 ? Colors.orange:Colors.grey,
             ),
           ),
-          title: 'جديد',
+          title: "جديد".tr(),
         ),
         EasyStep(
           
@@ -53,7 +54,7 @@ class StepperOrderWidget extends StatelessWidget {
              backgroundColor:statuse >=1 ? Colors.orange:Colors.grey,
             ),
           ),
-          title: 'قيد التجهيز',
+          title: "قيد التجهيز".tr(),
         ),
         EasyStep(
           customStep: CircleAvatar(
@@ -64,7 +65,7 @@ class StepperOrderWidget extends StatelessWidget {
           backgroundColor:statuse >=2 ? Colors.orange:Colors.grey,
             ),
           ),
-          title: 'قيد التوصيل',
+          title:"قيد التوصيل".tr(),
         ),
         EasyStep(
           customStep: CircleAvatar(
@@ -75,7 +76,7 @@ class StepperOrderWidget extends StatelessWidget {
             backgroundColor: statuse >=3 ? Colors.orange:Colors.grey,
             ),
           ),
-          title: ' مستلم',
+          title: "مستلم".tr(),
         ),
       ],
     );

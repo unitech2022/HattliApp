@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +36,7 @@ class OrdersProviderScreen extends StatelessWidget {
                       colorTextCount: state.currentIndexTap == 0
                           ? Palette.mainColor
                           : Colors.white,
-                      title: "جديد",
+                      title: "جديد".tr(),
                       count: state.homeResponseProvider!.orders!.where((element) => element.order.status == 0).toList().length.toString(),
                       onTap: () {
                         HomeCubit.get(context).changeCurrentIndexTap(0);
@@ -58,7 +59,7 @@ class OrdersProviderScreen extends StatelessWidget {
                       colorTextCount: state.currentIndexTap == 1
                           ? Palette.mainColor
                           : Colors.white,
-                      title: "في التسليم",
+                      title: "في التسليم".tr(),
                       count: state.homeResponseProvider!.orders!.where((element) => element.order.status <=2 && element.order.status>0).toList().length.toString(),
                       onTap: () {
                         HomeCubit.get(context).changeCurrentIndexTap(1);
@@ -81,7 +82,7 @@ class OrdersProviderScreen extends StatelessWidget {
                       colorTextCount: state.currentIndexTap == 2
                           ? Palette.mainColor
                           : Colors.white,
-                      title: "تم التسليم",
+                      title: "تم التسليم".tr(),
                       count:state.homeResponseProvider!.orders!.where((element) => element.order.status==3).toList().length.toString(),
                       onTap: () {
                         HomeCubit.get(context).changeCurrentIndexTap(2);

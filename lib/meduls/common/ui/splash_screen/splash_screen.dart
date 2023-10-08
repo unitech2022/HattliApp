@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hatlli/core/layout/palette.dart';
 
-import '../../../../core/layout/app_assets.dart';
+
 import '../../bloc/app_cubit/app_cubit.dart';
 
 class SplashScreen extends StatefulWidget {

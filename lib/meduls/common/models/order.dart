@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 
 import 'address_model.dart';
@@ -19,8 +20,8 @@ class OrderResponse extends Equatable {
         address: json['address'] != null
             ? AddressModel.fromJson(json['address'])
             : AddressModel(),
-        name: json['name'] ?? "غير معروف",
-        imageUrl: json['imageUrl'] ?? "غير معروف",
+        name: json['name'] ==null ?"غير معروف".tr(): json['name'],
+        imageUrl: json['imageUrl'] == null ? "غير معروف".tr():json['imageUrl'],
       );
 
   @override
@@ -32,6 +33,7 @@ class Order extends Equatable {
   final int providerId;
   final int status;
   final int payment;
+   final int type;
   final String userId;
   final double totalCost;
   final double productsCost;
@@ -43,6 +45,7 @@ class Order extends Equatable {
       {required this.id,
       required this.providerId,
       required this.status,
+       required this.type,
       required this.userId,
       required this.totalCost,
       required this.productsCost,
@@ -56,6 +59,7 @@ class Order extends Equatable {
       providerId: json["providerId"],
       status: json["status"],
       userId: json["userId"],
+      type: json["type"],
       totalCost: json["totalCost"].toDouble(),
       productsCost: json["productsCost"].toDouble(),
       // driverId: json["driverId"],
@@ -68,6 +72,7 @@ class Order extends Equatable {
       providerId: json["order"]["providerId"],
       status: json["order"]["status"],
       userId: json["order"]["userId"],
+       type: json["order"]["type"],
       totalCost: json["order"]["totalCost"].toDouble(),
       productsCost: json["order"]["productsCost"].toDouble(),
       // driverId: json["driverId"],

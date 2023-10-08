@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hatlli/core/helpers/helper_functions.dart';
 import 'package:hatlli/core/utils/app_model.dart';
 import 'package:hatlli/meduls/provider/bloc/provider_cubit/provider_cubit.dart';
 import 'package:hatlli/meduls/user/models/cart_model.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 import '../../../../core/enums/loading_status.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +26,17 @@ class CartCubit extends Cubit<CartState> {
 
 // ** add cart
   Future addCart(CartModel cartModel, {context}) async {
-    cartsFound.containsValue(cartModel.productId)
+    if(currentUser.status==1){
+      showTopMessage(
+            context: context,
+            customBar: CustomSnackBar.error(
+                backgroundColor: Colors.red,
+                message: "هذا الرقم محظور تواصل مع خدمة العملاء".tr(),
+                textStyle: TextStyle(
+                    fontFamily: "font", fontSize: 16, color: Colors.white)));
+
+    }else {
+ cartsFound.containsValue(cartModel.productId)
         ? cartsFound.remove(cartModel.productId)
         : cartsFound.addAll({cartModel.productId: cartModel.productId});
     emit(state.copyWith(addCartState: RequestState.loading));
@@ -50,6 +64,8 @@ class CartCubit extends Cubit<CartState> {
     } else {
       emit(state.copyWith(addCartState: RequestState.error));
     }
+    }
+   
   }
 
 // ** delete cart
@@ -100,15 +116,16 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  List<int> quantities = [];
-  List<double> prices = [];
+  // List<int> quantities = [];
+  Map<int, int> quantitiesMap = {};
+  Map<int, double> prices = {};
   double total = 0.0;
 //** get cart */
   Future getCarts({isState = true}) async {
     total = 0.0;
     if (isState) {
-      quantities = [];
-      prices = [];
+      // quantities = [];
+      prices.clear();
       cartsFound.clear();
       emit(state.copyWith(getCartsState: RequestState.loading));
     }
@@ -132,50 +149,72 @@ class CartCubit extends Cubit<CartState> {
       CartResponse cartResponse = CartResponse.fromJson(jsonData);
       for (CartDetails element in cartResponse.carts!) {
         cartsFound.addAll({element.product.id: element.product.id});
-        quantities.add(element.cart.quantity);
-        prices.add(element.cart.cost);
+        // quantities.add(element.cart.quantity);
+        quantitiesMap.addAll({element.product.id: element.cart.quantity});
+        prices.addAll({element.product.id: element.cart.cost});
       }
 
       total = cartResponse.totalCost!;
       emit(state.copyWith(
-          getCartsState: RequestState.loaded,
-          cartResponse: cartResponse,
-          quantities: quantities,
-          prices: prices));
+        getCartsState: RequestState.loaded,
+        cartResponse: cartResponse,
+        // quantities: quantities,
+        // prices: prices
+      ));
     } else {
       emit(state.copyWith(getCartsState: RequestState.error));
     }
   }
 
-  add(index, price, id) {
+  add(index, price, id, productId) {
     // total = 0.0;
     emit(state.copyWith(addCartState: RequestState.loading));
-    quantities[index]++;
-    prices[index] = price * quantities[index];
-    // print("${quantities[index].toString()} - ${price.toString()}");
+    // quantities[index]++;
+    quantitiesMap[productId] = quantitiesMap[productId]! + 1;
+    prices[productId] = price * quantitiesMap[productId];
 
-    // for (var element in prices) {
-    //   total += element;
-    // }
-    updateCart(quantities[index], id);
+    updateCart(quantitiesMap[productId], id);
     emit(state.copyWith(addCartState: RequestState.loaded));
   }
 
-  mins(index, price, id) {
+  mins(index, price, id, productId) {
     // total = 0.0;
     emit(state.copyWith(minusQuantityState: RequestState.loading));
-    if (quantities[index] > 1) {
-      quantities[index]--;
-      prices[index] = price * quantities[index];
+    if (quantitiesMap[productId]! > 1) {
+      // quantities[index]--;
+      prices[productId] = price * quantitiesMap[productId];
+      quantitiesMap[productId] = quantitiesMap[productId]! - 1;
       // print("${quantities[index].toString()} - ${price.toString()}");
 
       // for (var element in prices) {
       //   total += element;
       // }
       // total = prices.sum;
-      updateCart(quantities[index], id);
+      updateCart(quantitiesMap[productId], id);
     }
 
     emit(state.copyWith(minusQuantityState: RequestState.loaded));
+  }
+
+  addQuantityProductDetails({quantity, cartId, context}) {
+    quantity++;
+    emit(state.copyWith(quantity: quantity));
+    if (cartId != 0) {
+      updateCart(quantity, cartId);
+    }
+  }
+
+  minusQuantityProductDetails({quantity, cartId, context}) {
+    if (quantity > 1) {
+      quantity--;
+      emit(state.copyWith(quantity: quantity));
+      if (cartId != 0) {
+        updateCart(quantity, cartId);
+      }
+    }
+  }
+
+  changeQuantity(int quntity) {
+    emit(state.copyWith(quantity: quntity));
   }
 }

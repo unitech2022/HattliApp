@@ -1,3 +1,5 @@
+import 'package:hatlli/meduls/common/models/address_model.dart';
+
 import '../../common/models/category.dart';
 import '../../common/models/product.dart';
 import '../../common/models/provider.dart';
@@ -8,12 +10,14 @@ class DetailsProviderResponse {
   List<CategoryModel>? categories;
   Provider? provider;
   UserModel? user;
+  AddressModel? address;
 
   DetailsProviderResponse({
     this.products,
     this.categories,
     this.provider,
     this.user,
+    this.address
   });
 
   DetailsProviderResponse.fromJson(Map<String, dynamic> json) {
@@ -34,6 +38,10 @@ class DetailsProviderResponse {
         json['provider'] != null ? Provider.fromJson(json['provider']) : null;
     user = json['userDetail'] != null
         ? UserModel.fromJson(json['userDetail'])
+        : null;
+
+         address = json['address'] != null
+        ? AddressModel.fromJson(json['address'])
         : null;
   }
 }

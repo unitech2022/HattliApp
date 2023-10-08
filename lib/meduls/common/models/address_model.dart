@@ -23,8 +23,8 @@ class AddressModel {
     userId = json['userId'];
     description = json['description'];
     name = json['name'];
-    lat = json['lat'];
-    lng = json['lng'];
+    lat = json['lat'].toDouble();
+    lng = json['lng'].toDouble();
     defaultAddress = json['defaultAddress'];
     createdAt = json['createdAt'];
   }

@@ -1,27 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hatlli/core/helpers/helper_functions.dart';
+import 'package:hatlli/core/layout/app_fonts.dart';
 import 'package:hatlli/core/utils/utils.dart';
+import 'package:hatlli/meduls/common/bloc/home_cubit/home_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hatlli/core/enums/loading_status.dart';
-
 import 'package:hatlli/meduls/common/models/category.dart';
 import 'package:hatlli/meduls/common/models/product.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-
 import '../../../../core/router/routes.dart';
 import '../../../../core/utils/api_constatns.dart';
 import '../../../../core/utils/app_model.dart';
+import '../../../user/models/rate_response.dart';
 import '../../models/search_product_response.dart';
-
 part 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
@@ -31,6 +31,15 @@ class ProductCubit extends Cubit<ProductState> {
 
   changeCurrentCategory(CategoryModel newValue) {
     emit(state.copyWith(categoryModel: newValue));
+  }
+
+  emptyListImages() {
+    imagesList = [];
+    emit(state.copyWith(images: []));
+  }
+
+  isDiscountProduct(bool value) {
+    emit(state.copyWith(discount: value));
   }
 
   selectOptionProduct(String newValue, int type) {
@@ -147,6 +156,7 @@ class ProductCubit extends Cubit<ProductState> {
       'Description': product.description,
       'Images': product.images,
       'Sizes': product.sizes,
+      "discount": product.discount.toString(),
       'Price': product.price.toString(),
       'Calories': product.calories
     });
@@ -157,18 +167,25 @@ class ProductCubit extends Cubit<ProductState> {
     }
     if (response.statusCode == 200) {
       pop(context);
-      pushPageRoutName(context, navProvider);
 
-      // pushPageRoutName(context, navProvider);
+      // pop(context);
+
+     pop(context);
+      pushPageRoutName(context, navProvider);
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.success(
+          customBar: CustomSnackBar.success(
             backgroundColor: Colors.green,
-            message: "تم انشاء  المنتج بنجاح ",
+            message: "تم اضافة المنتج بنجاح ".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
-      emit(state.copyWith(addProductsState: RequestState.loaded));
+      // HomeCubit.get(context).getHomeProvider(context: context);
+      emit(state.copyWith(addProductsState: RequestState.loaded, images: []));
+
+      // HomeCubit.get(context).getHomeProvider(context: context);
+
+
     } else {
       print(response.reasonPhrase);
     }
@@ -191,13 +208,14 @@ class ProductCubit extends Cubit<ProductState> {
       pushPageRoutName(context, navProvider);
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.success(
+          customBar: CustomSnackBar.success(
             backgroundColor: Colors.green,
-            message: "تم حذف  المنتج بنجاح ",
+            message: "تم حذف  المنتج بنجاح".tr(),
             textStyle: TextStyle(
                 fontFamily: "font", fontSize: 16, color: Colors.white),
           ));
       emit(state.copyWith(deleteProductState: RequestState.loaded));
+      // HomeCubit.get(context).getHomeProvider(context: context);
     } else {
       pop(context);
       emit(state.copyWith(deleteProductState: RequestState.error));
@@ -205,18 +223,6 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
 //** update product
-  Future getDataProductForUpdate(
-      int categoryId, String sizes, String colors, String images) async {
-    CategoryModel categoryModel =
-        categories.firstWhere((element) => element.id == categoryId);
-
-    List<String> newImges = images.split("#");
-    emit(state.copyWith(
-        categoryModel: categoryModel,
-        colors: colors,
-        sizes: sizes,
-        images: newImges));
-  }
 
   Future updateProduct(Product product, context) async {
     showUpdatesLoading(context);
@@ -231,6 +237,7 @@ class ProductCubit extends Cubit<ProductState> {
       'Description': product.description,
       'Images': product.images,
       'Sizes': product.sizes,
+      "discount": product.discount.toString(),
       'Price': product.price.toString(),
       'Calories': product.calories,
       "id": product.id.toString()
@@ -242,22 +249,41 @@ class ProductCubit extends Cubit<ProductState> {
     }
     if (response.statusCode == 200) {
       pop(context);
+      // pop(context);
       pushPageRoutName(context, navProvider);
-
-      // pushPageRoutName(context, navProvider);
       showTopMessage(
           context: context,
-          customBar: const CustomSnackBar.success(
+          customBar: CustomSnackBar.success(
             backgroundColor: Colors.green,
-            message: "تم تعديل  المنتج بنجاح ",
+            message: "تم تعديل  المنتج بنجاح ".tr(),
             textStyle: TextStyle(
-                fontFamily: "font", fontSize: 16, color: Colors.white),
+                fontFamily: AppFonts.caM, fontSize: 16, color: Colors.white),
           ));
-      emit(state.copyWith(updateProductState: RequestState.loaded));
+      emit(state.copyWith(updateProductState: RequestState.loaded, images: []));
+      // HomeCubit.get(context).getHomeProvider(context: context);
+      // ProviderCubit.get(context).getProductsByProviderId(page: 1,providerId: currentProvider!.id);
     } else {
       emit(state.copyWith(updateProductState: RequestState.error));
     }
   }
+
+
+  Future getDataProductForUpdate(int categoryId, String sizes, String colors,
+      String images, discount) async {
+
+    emit(state.copyWith(getDataForUpdateState: RequestState.loading));
+    CategoryModel categoryModel =
+        categories.firstWhere((element) => element.id == categoryId,orElse:()=>categories[0]);
+
+    List<String> newImges = images.split("#");
+    emit(state.copyWith(getDataForUpdateState: RequestState.loaded,
+        categoryModel: categoryModel,
+        colors: colors,
+        sizes: sizes,
+        images: newImges,
+        discount: discount));
+  }
+
 
   changeCurrentPageSlider(int newIndex) {
     emit(state.copyWith(currentPageSlider: newIndex));
@@ -265,7 +291,7 @@ class ProductCubit extends Cubit<ProductState> {
 
   // ** search products
 
-  Future searchProducts({textSearch, context,type}) async {
+  Future searchProducts({textSearch, context, type}) async {
     emit(state.copyWith(searchProductsState: RequestState.loading));
     var request = http.Request(
         'GET',
@@ -281,7 +307,89 @@ class ProductCubit extends Cubit<ProductState> {
       String jsonDataString = await response.stream.bytesToString();
       final jsonData = jsonDecode(jsonDataString);
 
-      
+      emit(state.copyWith(
+          searchProductsState: RequestState.loaded,
+          searchProducts: List<SearchProductResponse>.from((jsonData as List)
+              .map((e) => SearchProductResponse.fromJson(e)))));
+    } else {
+      emit(state.copyWith(searchProductsState: RequestState.error));
+    }
+  }
+
+//** add rate */
+  Future addRateProduct({context, productId, comment, stare}) async {
+    emit(state.copyWith(addRateProductState: RequestState.loading));
+    var request = http.MultipartRequest(
+        'POST', Uri.parse(ApiConstants.baseUrl + '/rates/add-rate'));
+    request.fields.addAll({
+      'productId': productId.toString(),
+      'UserId': currentUser.id!,
+      'Comment': comment,
+      'Stare': stare.toString()
+    });
+
+    http.StreamedResponse response = await request.send();
+    print(response.statusCode.toString() + " ========> addRateProduct");
+    if (response.statusCode == 200) {
+      String jsonDataString = await response.stream.bytesToString();
+      final jsonData = jsonDecode(jsonDataString);
+
+      showTopMessage(
+          context: context,
+          customBar: CustomSnackBar.success(
+              backgroundColor: Colors.green,
+              message: jsonData["message"].toString().tr(),
+              textStyle: TextStyle(
+                  fontFamily: AppFonts.caM,
+                  fontSize: 16,
+                  color: Colors.white)));
+      emit(state.copyWith(addRateProductState: RequestState.loaded));
+      getRateProduct(productId: productId);
+      HomeCubit.get(context).getHomeUser(context: context);
+    } else {
+      emit(state.copyWith(addRateProductState: RequestState.error));
+    }
+  }
+
+//** get rate */
+  Future getRateProduct({context, productId}) async {
+    emit(state.copyWith(getRateProductState: RequestState.loading));
+    var request = http.Request(
+        'GET',
+        Uri.parse(ApiConstants.baseUrl +
+            '/rates/rates-product?productId=$productId'));
+
+    http.StreamedResponse response = await request.send();
+    print(response.statusCode.toString() + " ========> getRateProduct");
+    if (response.statusCode == 200) {
+      String jsonDataString = await response.stream.bytesToString();
+      final jsonData = jsonDecode(jsonDataString);
+
+      emit(state.copyWith(
+          rates: List<RateResponse>.from(
+              (jsonData as List).map((e) => RateResponse.fromJson(e)).toList()),
+          getRateProductState: RequestState.loaded));
+    } else {
+      emit(state.copyWith(getRateProductState: RequestState.error));
+    }
+  }
+
+  Future getProductsByProviderId({page, context, providerId}) async {
+    emit(state.copyWith(searchProductsState: RequestState.loading));
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            '${ApiConstants.baseUrl}/product/get-Products-By-providerId-page?page=${page.toString()}&providerId=${providerId.toString()}'));
+
+    http.StreamedResponse response = await request.send();
+
+    if (kDebugMode) {
+      print("searchProducts========> ${response.statusCode}");
+    }
+    if (response.statusCode == 200) {
+      String jsonDataString = await response.stream.bytesToString();
+      final jsonData = jsonDecode(jsonDataString);
+
       emit(state.copyWith(
           searchProductsState: RequestState.loaded,
           searchProducts: List<SearchProductResponse>.from((jsonData as List)

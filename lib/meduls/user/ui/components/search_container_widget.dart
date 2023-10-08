@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../../../../core/layout/app_fonts.dart';
 import '../../../../core/layout/palette.dart';
 import '../../../../core/styles/style_widget.dart';
@@ -59,9 +61,9 @@ class _ContainerSearchWidgetState extends State<ContainerSearchWidget> {
                   //       SearchProductsScreen(textSearch: _controller.text));
                   // }
                 },
-                decoration: const InputDecoration(
+                decoration:  InputDecoration(
                   border: InputBorder.none,
-                  hintText: "البحث",
+                  hintText: "البحث".tr(),
                   hintStyle: TextStyle(
                     fontFamily: AppFonts.taM,
                     fontSize: 14,
@@ -88,5 +90,7 @@ class _ContainerSearchWidgetState extends State<ContainerSearchWidget> {
             ),
           )
         ]));
+  
+  
   }
 }

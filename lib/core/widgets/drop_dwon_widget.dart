@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hatlli/core/utils/app_model.dart';
 import '../../meduls/common/models/category.dart';
 import '../layout/app_fonts.dart';
 
@@ -41,7 +42,7 @@ class _CustomDropDownWidgetState extends State<CustomDropDownWidget> {
               
                 value: item,
                 child: Text(
-                  item.name,
+                  AppModel.lang=="ar"?item.name:item.nameEng,
                   style:   const TextStyle(
                     fontSize: 14,
                     fontFamily: AppFonts.taM,
@@ -80,3 +81,4 @@ class _CustomDropDownWidgetState extends State<CustomDropDownWidget> {
     );
   }
 }
+

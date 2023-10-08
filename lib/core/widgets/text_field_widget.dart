@@ -9,8 +9,9 @@ class TextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType type;
   final String family;
+  final bool display;
   final int maxLength;
-  final bool enable;
+  final bool enable, isPhone;
 
   const TextFieldWidget(
       {super.key,
@@ -19,8 +20,10 @@ class TextFieldWidget extends StatelessWidget {
       required this.controller,
       required this.type,
       this.family = AppFonts.taM,
-      this.enable=true,
-       this.maxLength=0});
+      this.enable = true,
+       this.display = false,
+      this.isPhone = false,
+      this.maxLength = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -42,19 +45,28 @@ class TextFieldWidget extends StatelessWidget {
       ),
       child: TextField(
         enabled: enable,
+        
         controller: controller,
         keyboardType: type,
         maxLength: maxLength == 0 ? null : maxLength,
-        
+        textAlign: TextAlign.start,
         style: const TextStyle(
             fontFamily: AppFonts.taM, fontSize: 14, color: Colors.black),
+            obscureText: display,
         decoration: InputDecoration(
-          icon: icon,
+          
+          isDense: false,
+          fillColor: Colors.red,
+          icon: isPhone ? SizedBox() : icon,
+          suffixIcon: isPhone ? icon : SizedBox(),
           hintText: hint,
           counterText: "",
           border: InputBorder.none,
           hintStyle: TextStyle(
-              fontFamily: family, fontSize: 14, color: Color(0xff1D1D1D)),
+              fontFamily: family,
+              fontSize: 14,
+              color: Color(0xff1D1D1D),
+              height: 1.6),
         ),
       ),
     );
