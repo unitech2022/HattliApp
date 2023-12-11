@@ -3,10 +3,10 @@
     <channel>
         <title>Update App</title>
         <item>
-            <title>Version 4.1.6+51</title>
+            <title>Version 2.0.1+7</title>
             <description>تم اضافة بعض الميزات</description>
-            <pubDate>Fri, 17 Nov 2023 12:00:00 +0000</pubDate>
-            <enclosure url="https://play.google.com/store/apps/details?id=com.hatlliapp.hatlli" sparkle:version="4.1.6+51" sparkle:os="android" />
+            <pubDate>Fri, 17 dec 2023 12:00:00 +0000</pubDate>
+            <enclosure url="https://play.google.com/store/apps/details?id=com.hatlliapp.hatlli" sparkle:version="2.0.1+7" sparkle:os="android" />
         </item>
     </channel>
 </rss>
